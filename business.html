@@ -1,0 +1,3137 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>QLAB BIO — Predict cognitive decline from a single drop.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"/>
+<style>
+/* ─────────── RESET / TOKENS ─────────── */
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
+body {
+  font-family: 'Geist', 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-size:15px; line-height:1.5;
+  color:#08090A;
+  background:#FAFAFA;
+  -webkit-font-smoothing:antialiased;
+  font-feature-settings:"ss01", "cv11";
+  word-break:keep-all;
+}
+a { color:inherit; text-decoration:none; }
+img,svg { display:block; max-width:100%; }
+button { font:inherit; cursor:pointer; border:none; background:none; color:inherit; }
+
+:root {
+  --bg:        #FAFAFA;
+  --bg-2:      #F4F4F5;
+  --bg-3:      #EEEEF0;
+  --surface:   #FFFFFF;
+  --line:      #E4E4E7;
+  --line-2:    #D4D4D8;
+  --line-soft: #EDEDEF;
+
+  --ink:       #08090A;
+  --ink-2:     #18181B;
+  --text:      #3F3F46;
+  --muted:     #71717A;
+  --muted-2:   #A1A1AA;
+
+  /* electric blue accent — single accent system */
+  --blue:      #1F8A82;
+  --blue-2:    #0F6F68;
+  --blue-tint: #E6F3F1;
+  --blue-glow: rgba(31,138,130,.20);
+
+  /* status — used sparingly */
+  --green:     #00A656;
+  --amber:     #D97706;
+  --red:       #DC2626;
+
+  /* dark surface for diagrams */
+  --dark:      #0A0A0B;
+  --dark-2:    #131316;
+  --dark-3:    #1C1C20;
+  --dark-line: #232328;
+  --dark-text: #A1A1AA;
+}
+
+.font-mono {
+  font-family: 'Geist Mono', ui-monospace, monospace;
+  font-feature-settings:"tnum","ss01";
+}
+.tnum { font-variant-numeric: tabular-nums; }
+
+/* ─────────── GRID BG (subtle dot pattern) ─────────── */
+.grid-bg {
+  background-image:
+    radial-gradient(circle, var(--line-2) 1px, transparent 1px);
+  background-size: 24px 24px;
+  background-position: 0 0;
+}
+
+/* ─────────── LAYOUT ─────────── */
+.wrap { max-width:1240px; margin:0 auto; padding:0 32px; position:relative; }
+@media (max-width:768px) { .wrap { padding:0 20px; } }
+
+/* center grid lines (faint vertical 1px guides) */
+.grid-guides {
+  position:absolute; inset:0; pointer-events:none;
+  display:grid; grid-template-columns:repeat(12,1fr);
+  max-width:1240px; margin:0 auto;
+  padding:0 32px;
+  z-index:0;
+}
+.grid-guides span {
+  border-left:1px solid var(--line-soft);
+  height:100%;
+}
+.grid-guides span:last-child { border-right:1px solid var(--line-soft); }
+@media (max-width:900px) { .grid-guides { display:none; } }
+
+/* ─────────── NAV ─────────── */
+.nav {
+  position:sticky; top:0; z-index:100;
+  background:rgba(250,250,250,.72);
+  backdrop-filter:blur(16px) saturate(180%);
+  -webkit-backdrop-filter:blur(16px) saturate(180%);
+  border-bottom:1px solid transparent;
+  transition:border-color .15s, background .15s;
+}
+.nav.scrolled { border-bottom-color:var(--line); }
+.nav-inner {
+  max-width:1240px; margin:0 auto;
+  padding:14px 32px;
+  display:flex; align-items:center; gap:8px;
+}
+.logo {
+  display:inline-flex; align-items:center; gap:8px;
+  font-size:14px; font-weight:600;
+  letter-spacing:-.01em; color:var(--ink);
+}
+.logo-mark {
+  width:24px; height:24px;
+  background-image:url('img/logo-mark.png');
+  background-size:contain;
+  background-repeat:no-repeat;
+  background-position:center;
+  flex-shrink:0;
+}
+.logo-mark::before, .logo-mark::after { content:none !important; display:none; }
+.logo-tag {
+  font-family:'Geist Mono', monospace;
+  font-size:10px; color:var(--muted);
+  margin-left:4px; padding:2px 6px;
+  border:1px solid var(--line);
+  border-radius:4px;
+  letter-spacing:.04em;
+}
+.nav-links {
+  display:flex; gap:0; margin-left:32px;
+}
+.nav-links a {
+  font-size:13px; font-weight:500; color:var(--text);
+  padding:6px 12px; border-radius:6px;
+  transition:background .12s, color .12s;
+}
+.nav-links a:hover { background:var(--bg-3); color:var(--ink); }
+.nav-links a.active { color:var(--ink); }
+.nav-spacer { flex:1; }
+.nav-actions { display:flex; align-items:center; gap:6px; }
+.btn {
+  display:inline-flex; align-items:center; gap:8px;
+  font-size:13px; font-weight:500;
+  padding:7px 12px; border-radius:7px;
+  transition:all .12s ease;
+  white-space:nowrap;
+}
+.btn-ghost { color:var(--text); }
+.btn-ghost:hover { background:var(--bg-3); color:var(--ink); }
+.btn-dark {
+  background:var(--ink); color:#fff;
+  box-shadow: 0 1px 0 rgba(0,0,0,.05), inset 0 1px 0 rgba(255,255,255,.08);
+}
+.btn-dark:hover { background:var(--ink-2); transform:translateY(-1px); box-shadow: 0 4px 14px rgba(0,0,0,.2); }
+.btn-blue {
+  background:var(--blue); color:#fff;
+  box-shadow: 0 1px 0 rgba(0,0,0,.05), inset 0 1px 0 rgba(255,255,255,.16), 0 0 0 1px rgba(31,138,130,.4);
+}
+.btn-blue:hover { background:var(--blue-2); transform:translateY(-1px); box-shadow: 0 6px 20px var(--blue-glow); }
+.btn .arrow { font-family:'Geist Mono', monospace; font-size:13px; }
+.btn-outline {
+  border:1px solid var(--line); background:#fff;
+}
+.btn-outline:hover { border-color:var(--ink); }
+
+.kbd {
+  font-family:'Geist Mono', monospace;
+  font-size:10px; color:var(--muted);
+  padding:2px 5px; border:1px solid var(--line);
+  border-radius:4px; background:#fff;
+  margin-left:4px;
+}
+.nav-burger { display:none; width:36px; height:36px; align-items:center; justify-content:center; }
+.nav-burger span,.nav-burger span::before,.nav-burger span::after {
+  content:''; display:block; width:18px; height:1.5px;
+  background:var(--ink); border-radius:2px;
+}
+.nav-burger span { position:relative; }
+.nav-burger span::before { position:absolute; top:-6px; }
+.nav-burger span::after { position:absolute; top:6px; }
+
+@media (max-width:900px) {
+  .nav-inner { padding:12px 20px; }
+  .nav-links, .nav-actions .btn-ghost, .nav-actions .btn-dark .kbd { display:none; }
+  .nav-burger { display:flex; }
+  .logo-tag { display:none; }
+}
+
+/* mobile menu */
+.menu {
+  position:fixed; inset:0; z-index:90;
+  background:#fff;
+  display:flex; flex-direction:column;
+  padding:72px 24px 24px;
+  transform:translateY(-100%);
+  transition:transform .3s ease;
+}
+.menu.open { transform:none; }
+.menu a {
+  display:flex; justify-content:space-between; align-items:baseline;
+  padding:18px 4px; font-size:22px; font-weight:500; color:var(--ink);
+  border-bottom:1px solid var(--line);
+  letter-spacing:-.01em;
+}
+.menu a span { font-family:'Geist Mono', monospace; font-size:11px; color:var(--muted-2); font-weight:400; }
+.menu .menu-foot {
+  margin-top:auto;
+  padding-top:24px;
+  display:flex; flex-direction:column; gap:12px;
+}
+.menu .menu-foot .btn { justify-content:center; padding:12px; font-size:14px; }
+.menu-close {
+  position:absolute; top:14px; right:18px;
+  width:32px; height:32px;
+  display:grid; place-items:center;
+  font-size:22px; color:var(--ink);
+}
+body.menu-open { overflow:hidden; }
+
+/* ─────────── HERO ─────────── */
+.hero {
+  position:relative;
+  padding:80px 0 0;
+  overflow:hidden;
+}
+.hero-glow {
+  position:absolute;
+  top:-200px; left:50%;
+  width:900px; height:600px;
+  transform:translateX(-50%);
+  background:
+    radial-gradient(ellipse 600px 300px at 30% 50%, rgba(31,138,130,.10), transparent 60%),
+    radial-gradient(ellipse 500px 250px at 70% 60%, rgba(31,138,130,.06), transparent 60%);
+  pointer-events:none;
+  z-index:0;
+}
+.hero-tag {
+  display:inline-flex; align-items:center; gap:8px;
+  font-family:'Geist Mono', monospace;
+  font-size:11px; color:var(--text); letter-spacing:.02em;
+  padding:5px 5px 5px 12px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.6);
+  border-radius:100px;
+  margin-bottom:32px;
+}
+.hero-tag-pill {
+  display:inline-flex; align-items:center; gap:5px;
+  background:var(--ink); color:#fff;
+  padding:3px 8px; border-radius:100px;
+  font-size:10px; font-weight:500;
+  letter-spacing:.04em;
+}
+.hero-tag-pill::before {
+  content:''; width:5px; height:5px; border-radius:50%;
+  background:#22D17C;
+  box-shadow:0 0 6px rgba(34,209,124,.6);
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 50% { opacity:.5; } }
+
+.hero-h1 {
+  font-size:clamp(40px, 6vw, 80px);
+  font-weight:500; letter-spacing:-.04em;
+  line-height:1.02;
+  color:var(--ink);
+  max-width:920px;
+}
+.hero-h1 .blue { color:var(--blue); }
+.hero-h1 .underline {
+  position:relative; display:inline-block;
+}
+.hero-h1 .underline::after {
+  content:''; position:absolute;
+  left:0; right:0; bottom:.05em; height:.1em;
+  background:var(--blue); opacity:.18;
+  border-radius:2px;
+}
+.hero-sub {
+  font-size:17px; color:var(--text); line-height:1.55;
+  max-width:580px; margin-top:28px;
+}
+.hero-actions {
+  display:flex; gap:8px; margin-top:36px; flex-wrap:wrap; align-items:center;
+}
+.hero-actions .btn { padding:10px 16px; font-size:14px; }
+
+.hero-meta-strip {
+  display:flex; align-items:center; gap:32px;
+  margin-top:48px;
+  font-family:'Geist Mono', monospace; font-size:11px;
+  color:var(--muted); letter-spacing:.02em;
+  text-transform:uppercase;
+}
+.hero-meta-strip > div { display:flex; align-items:center; gap:8px; }
+.hero-meta-strip .dot { width:5px; height:5px; border-radius:50%; background:var(--blue); }
+@media (max-width:600px) {
+  .hero-meta-strip { gap:20px; flex-wrap:wrap; }
+}
+
+/* ─────────── DASHBOARD HERO MOCK ─────────── */
+.dash {
+  margin:64px 0 0;
+  position:relative;
+}
+.dash-frame {
+  background:var(--dark);
+  border:1px solid var(--dark-line);
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.04) inset,
+    0 30px 80px -20px rgba(0,0,0,.25),
+    0 0 0 1px var(--line);
+}
+.dash-bar {
+  display:flex; align-items:center;
+  padding:10px 14px;
+  border-bottom:1px solid var(--dark-line);
+  gap:8px;
+  background:var(--dark-2);
+}
+.dash-bar .dot { width:10px; height:10px; border-radius:50%; }
+.dash-bar .dot.r { background:#FF5F57; }
+.dash-bar .dot.y { background:#FEBC2E; }
+.dash-bar .dot.g { background:#28C840; }
+.dash-bar .url {
+  margin-left:16px;
+  font-family:'Geist Mono', monospace;
+  font-size:11px; color:var(--dark-text);
+  background:#000;
+  padding:5px 12px; border-radius:6px;
+  border:1px solid var(--dark-line);
+  display:inline-flex; align-items:center; gap:8px;
+  flex:1; max-width:380px;
+}
+.dash-bar .url::before {
+  content:'⌁'; color:var(--blue); font-size:13px;
+}
+.dash-bar .url-host { color:#fff; }
+.dash-bar-actions {
+  margin-left:auto;
+  display:flex; gap:6px; font-family:'Geist Mono', monospace;
+  font-size:10px; color:var(--dark-text);
+}
+.dash-bar-actions span {
+  padding:4px 8px; border:1px solid var(--dark-line); border-radius:5px;
+  background:#000;
+}
+
+.dash-body {
+  display:grid;
+  grid-template-columns:200px 1fr 280px;
+  height:520px;
+  color:var(--dark-text);
+}
+@media (max-width:900px) {
+  .dash-body { grid-template-columns:1fr; height:auto; }
+  .dash-side, .dash-right { display:none; }
+  .dash-bar .url { max-width:none; }
+}
+
+.dash-side {
+  border-right:1px solid var(--dark-line);
+  padding:18px 14px;
+  font-size:12px;
+}
+.dash-side-section { margin-bottom:24px; }
+.dash-side-h {
+  font-family:'Geist Mono', monospace;
+  font-size:9px; color:#52525B;
+  letter-spacing:.08em; text-transform:uppercase;
+  padding:0 10px 8px;
+}
+.dash-side-item {
+  display:flex; align-items:center; gap:8px;
+  padding:7px 10px; border-radius:6px;
+  cursor:pointer;
+  transition:background .12s;
+}
+.dash-side-item:hover { background:var(--dark-3); }
+.dash-side-item.active { background:var(--dark-3); color:#fff; }
+.dash-side-item.active::before { content:'›'; color:var(--blue); margin-right:-2px; }
+.dash-side-icon { width:14px; height:14px; opacity:.7; }
+.dash-side-count {
+  margin-left:auto; font-family:'Geist Mono', monospace;
+  font-size:10px; color:#52525B;
+}
+
+.dash-main {
+  padding:24px 28px;
+  overflow:hidden;
+}
+.dash-main-h {
+  display:flex; align-items:flex-start; justify-content:space-between;
+  margin-bottom:24px;
+}
+.dash-main-title {
+  font-size:14px; font-weight:500; color:#fff;
+  display:flex; align-items:center; gap:10px;
+}
+.dash-pill {
+  font-family:'Geist Mono', monospace;
+  font-size:9px; padding:3px 7px;
+  border-radius:100px;
+  background:rgba(31,138,130,.16);
+  color:#7E9DFF;
+  letter-spacing:.04em;
+  border:1px solid rgba(31,138,130,.25);
+}
+.dash-main-meta {
+  font-family:'Geist Mono', monospace;
+  font-size:10px; color:#52525B; letter-spacing:.04em;
+  display:flex; gap:8px; align-items:center;
+}
+.dash-main-meta .live::before { content:''; display:inline-block; width:5px; height:5px; border-radius:50%; background:#22D17C; margin-right:5px; vertical-align:1px; box-shadow:0 0 6px rgba(34,209,124,.6); }
+
+/* metric cards */
+.dash-metrics {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:1px; background:var(--dark-line);
+  border:1px solid var(--dark-line); border-radius:8px;
+  overflow:hidden; margin-bottom:20px;
+}
+.dash-metric {
+  background:var(--dark-2); padding:14px 16px;
+}
+.dash-metric-lbl {
+  font-family:'Geist Mono', monospace;
+  font-size:9px; color:#52525B;
+  letter-spacing:.08em; text-transform:uppercase; margin-bottom:8px;
+}
+.dash-metric-val {
+  font-family:'Geist Mono', monospace;
+  font-size:24px; color:#fff; font-weight:400;
+  letter-spacing:-.02em; line-height:1;
+}
+.dash-metric-val .small { font-size:14px; color:var(--dark-text); }
+.dash-metric-trend {
+  font-size:10px; color:#22D17C; margin-top:8px;
+  font-family:'Geist Mono', monospace;
+}
+.dash-metric-trend.warn { color:#FFB020; }
+
+/* chart */
+.dash-chart {
+  background:var(--dark-2);
+  border:1px solid var(--dark-line);
+  border-radius:8px;
+  padding:18px;
+  position:relative;
+  height:200px;
+}
+.dash-chart-h {
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:8px;
+}
+.dash-chart-h h4 { font-size:12px; color:#fff; font-weight:500; }
+.dash-chart-h .legend {
+  display:flex; gap:14px; font-family:'Geist Mono', monospace;
+  font-size:10px; color:var(--dark-text);
+}
+.dash-chart-h .legend span { display:flex; align-items:center; gap:5px; }
+.dash-chart-h .legend i {
+  display:inline-block; width:8px; height:2px; border-radius:1px;
+}
+.dash-chart svg { width:100%; height:140px; }
+
+/* right panel */
+.dash-right {
+  border-left:1px solid var(--dark-line);
+  padding:18px;
+  font-size:12px;
+  overflow:hidden;
+}
+.dash-right-h {
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:14px;
+}
+.dash-right-h h4 { font-size:12px; color:#fff; font-weight:500; }
+.dash-right-h span { font-family:'Geist Mono', monospace; font-size:10px; color:#52525B; }
+.dash-event {
+  display:grid; grid-template-columns:auto 1fr auto;
+  gap:10px; padding:10px 0;
+  border-bottom:1px solid var(--dark-line);
+  font-size:11px;
+  align-items:center;
+}
+.dash-event:last-child { border-bottom:none; }
+.dash-event-dot {
+  width:8px; height:8px; border-radius:50%;
+  border:1.5px solid var(--blue);
+  background:rgba(31,138,130,.2);
+}
+.dash-event-dot.g { border-color:#22D17C; background:rgba(34,209,124,.18); }
+.dash-event-dot.a { border-color:#FFB020; background:rgba(255,176,32,.18); }
+.dash-event-name { color:#fff; font-size:11px; }
+.dash-event-meta { font-family:'Geist Mono', monospace; font-size:9px; color:#52525B; margin-top:2px; }
+.dash-event-time { font-family:'Geist Mono', monospace; font-size:10px; color:var(--dark-text); }
+
+/* ─────────── LOGO MARQUEE ─────────── */
+.trust {
+  padding:60px 0 40px;
+  border-top:1px solid var(--line);
+  margin-top:80px;
+}
+.trust-label {
+  font-family:'Geist Mono', monospace;
+  font-size:11px; color:var(--muted);
+  letter-spacing:.06em; text-transform:uppercase;
+  text-align:center; margin-bottom:32px;
+}
+.trust-grid {
+  display:grid; grid-template-columns:repeat(6,1fr);
+  align-items:center;
+  gap:0;
+}
+.trust-grid > div {
+  text-align:center;
+  font-size:14px; color:var(--muted);
+  font-weight:500;
+  padding:12px;
+  letter-spacing:-.005em;
+}
+@media (max-width:768px) {
+  .trust-grid { grid-template-columns:repeat(3,1fr); gap:8px; }
+}
+
+/* ─────────── SECTIONS ─────────── */
+section { padding:120px 0; position:relative; }
+@media (max-width:900px) { section { padding:80px 0; } }
+
+.sec-head {
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:48px; align-items:end;
+  margin-bottom:64px;
+}
+.sec-num {
+  font-family:'Geist Mono', monospace;
+  font-size:11px; color:var(--muted);
+  letter-spacing:.04em;
+  display:flex; flex-direction:column; gap:8px;
+  padding-top:6px;
+}
+.sec-num strong { color:var(--ink); font-weight:500; }
+.sec-num::before {
+  content:''; width:32px; height:1px; background:var(--ink);
+}
+.sec-title {
+  font-size:clamp(28px, 3.6vw, 44px);
+  font-weight:500; letter-spacing:-.025em;
+  line-height:1.1;
+  color:var(--ink);
+}
+.sec-title .blue { color:var(--blue); }
+.sec-title .light { color:var(--muted); font-weight:400; }
+.sec-lead {
+  font-size:16px; color:var(--text); line-height:1.55;
+  max-width:540px; margin-top:18px;
+}
+@media (max-width:900px) {
+  .sec-head { grid-template-columns:1fr; gap:16px; align-items:start; margin-bottom:40px; }
+  .sec-num::before { display:none; }
+}
+
+/* ─────────── PROBLEM (data table) ─────────── */
+.problem { background:var(--surface); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+.prob-table {
+  border:1px solid var(--line);
+  border-radius:10px;
+  overflow:hidden;
+  background:#fff;
+}
+.prob-th {
+  display:grid; grid-template-columns:60px 2fr 1.6fr 1fr;
+  background:var(--bg-2);
+  border-bottom:1px solid var(--line);
+  padding:10px 20px;
+  font-family:'Geist Mono', monospace;
+  font-size:10px; color:var(--muted);
+  letter-spacing:.06em; text-transform:uppercase;
+}
+.prob-row {
+  display:grid; grid-template-columns:60px 2fr 1.6fr 1fr;
+  padding:24px 20px;
+  border-bottom:1px solid var(--line-soft);
+  align-items:center;
+  transition:background .12s;
+}
+.prob-row:hover { background:var(--bg); }
+.prob-row:last-child { border-bottom:none; }
+.prob-row-i {
+  font-family:'Geist Mono', monospace;
+  font-size:11px; color:var(--muted-2);
+}
+.prob-row-name {
+  font-weight:500; color:var(--ink); font-size:15px;
+  display:flex; align-items:center; gap:10px;
+}
+.prob-row-name .tag {
+  font-family:'Geist Mono', monospace;
+  font-size:10px; padding:2px 6px;
+  background:var(--blue-tint); color:var(--blue);
+  border-radius:4px; letter-spacing:.04em;
+}
+.prob-row-desc {
+  font-size:13px; color:var(--text); line-height:1.5;
+}
+.prob-row-num {
+  font-family:'Geist Mono', monospace;
+  font-size:24px; color:var(--ink);
+  text-align:right; letter-spacing:-.02em;
+  line-height:1; font-weight:400;
+}
+.prob-row-num small {
+  font-size:12px; color:var(--muted); margin-left:2px;
+}
+
+@media (max-width:768px) {
+  .prob-th { display:none; }
+  .prob-row { grid-template-columns:32px 1fr; gap:6px 12px; padding:18px 16px; }
+  .prob-row-i { font-size:10px; }
+  .prob-row-name { font-size:14px; }
+  .prob-row-desc { grid-column:2; font-size:12px; }
+  .prob-row-num { grid-column:2; text-align:left; font-size:20px; margin-top:6px; }
+}
+
+/* ─────────── HOW IT WORKS (pipeline) ─────────── */
+.how { background:var(--bg); }
+.pipeline {
+  background:var(--dark);
+  border-radius:14px;
+  border:1px solid var(--line);
+  padding:28px;
+  position:relative;
+  overflow:hidden;
+  box-shadow: 0 30px 80px -20px rgba(8,9,10,.18);
+}
+.pipeline::before {
+  content:'';
+  position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse 800px 200px at 50% 0%, rgba(31,138,130,.08), transparent 60%);
+  pointer-events:none;
+}
+.pipeline-bar {
+  display:flex; align-items:center; gap:10px;
+  font-family:'Geist Mono', monospace;
+  font-size:10px; color:#52525B;
+  letter-spacing:.06em; text-transform:uppercase;
+  margin-bottom:24px;
+  padding-bottom:16px; border-bottom:1px solid var(--dark-line);
+}
+.pipeline-bar .live {
+  display:inline-flex; align-items:center; gap:6px;
+  color:#22D17C;
+}
+.pipeline-bar .live::before {
+  content:''; width:5px; height:5px; border-radius:50%; background:#22D17C;
+  box-shadow:0 0 6px rgba(34,209,124,.6); animation:pulse 2s infinite;
+}
+.pipeline-bar .sep { color:var(--dark-line); }
+
+.pipeline-flow {
+  display:grid; grid-template-columns:repeat(4,1fr);
+  gap:0; position:relative;
+  margin-bottom:24px;
+}
+.pipeline-step {
+  padding:16px;
+  border:1px solid var(--dark-line);
+  border-radius:10px;
+  background:var(--dark-2);
+  transition:all .15s;
+  cursor:pointer;
+  position:relative;
+  margin-right:32px;
+}
+.pipeline-step:last-child { margin-right:0; }
+.pipeline-step::after {
+  content:'→';
+  position:absolute;
+  right:-22px; top:50%;
+  transform:translateY(-50%);
+  font-family:'Geist Mono', monospace;
+  color:var(--dark-line); font-size:18px;
+  pointer-events:none;
+}
+.pipeline-step:last-child::after { display:none; }
+.pipeline-step.active {
+  border-color:var(--blue);
+  background:rgba(31,138,130,.06);
+  box-shadow: 0 0 0 1px var(--blue), 0 0 24px rgba(31,138,130,.18);
+}
+.pipeline-step.active::after { color:var(--blue); }
+.pipeline-step-i {
+  font-family:'Geist Mono', monospace;
+  font-size:10px; color:#52525B;
+  letter-spacing:.06em; margin-bottom:10px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.pipeline-step.active .pipeline-step-i { color:#7E9DFF; }
+.pipeline-step-i .dur {
+  background:rgba(255,255,255,.04);
+  padding:2px 6px; border-radius:4px;
+}
+.pipeline-step h4 {
+  font-size:14px; font-weight:500; color:#fff;
+  margin-bottom:6px;
+  letter-spacing:-.005em;
+}
+.pipeline-step p {
+  font-size:12px; color:var(--dark-text); line-height:1.5;
+}
+
+@media (max-width:900px) {
+  .pipeline-flow { grid-template-columns:1fr; gap:10px; }
+  .pipeline-step { margin-right:0; }
+  .pipeline-step::after { display:none; }
+}
+
+/* pipeline detail body */
+.pipeline-detail {
+  background:#000;
+  border:1px solid var(--dark-line);
+  border-radius:10px;
+  display:grid;
+  grid-template-columns:1.4fr 1fr;
+  min-height:300px;
+  overflow:hidden;
+}
+.pipeline-detail-l {
+  padding:24px;
+  border-right:1px solid var(--dark-line);
+  display:flex; flex-direction:column; gap:14px;
+}
+.pdetail-h {
+  display:flex; justify-content:space-between; align-items:center;
+  font-family:'Geist Mono', monospace;
+  font-size:10px; color:#52525B;
+  letter-spacing:.06em; text-transform:uppercase;
+  padding-bottom:10px;
+  border-bottom:1px solid var(--dark-line);
+}
+.pdetail-h .ok { color:#22D17C; }
+/* stage media v2: image + result data composite */
+.stage-media {
+  background:#0A0B0E;
+  border:1px solid var(--dark-line);
+  border-radius:8px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  min-height:420px;
+}
+.stage-media-bar {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 14px;
+  border-bottom:1px solid var(--dark-line);
+  font-family:'Geist Mono', monospace;
+  font-size:10px; color:#52525B;
+  letter-spacing:.06em; text-transform:uppercase;
+  flex-shrink:0;
+}
+.stage-media-bar .meta { color:#fff; text-transform:none; letter-spacing:0; }
+.stage-media-body {
+  display:grid; grid-template-columns: 180px 1fr;
+  gap:14px; padding:14px;
+  flex:1; min-height:0;
+}
+.stage-media-thumb {
+  background:#000 center/cover no-repeat;
+  border:1px solid var(--dark-line);
+  border-radius:6px;
+  position:relative; overflow:hidden;
+  min-height:200px;
+}
+.stage-media-thumb.contain { background-size:contain; background-color:#0E0F12; background-position:center; background-repeat:no-repeat; }
+.stage-media-thumb-tag {
+  position:absolute; left:8px; bottom:8px;
+  font-family:'Geist Mono', monospace; font-size:9px;
+  color:#fff; letter-spacing:.04em;
+  background:rgba(0,0,0,.55); border:1px solid rgba(255,255,255,.18);
+  padding:4px 7px; border-radius:4px;
+  backdrop-filter:blur(6px);
+}
+.stage-data {
+  display:flex; flex-direction:column; gap:10px;
+  font-family:'Geist Mono', monospace;
+  font-size:11px; color:var(--dark-text);
+  min-width:0;
+}
+.stage-data h5 {
+  font-family:'Geist',sans-serif;
+  font-size:11px; font-weight:500;
+  color:#fff; letter-spacing:.04em; text-transform:uppercase;
+  margin-bottom:2px;
+}
+.stage-data-row {
+  display:grid; grid-template-columns: 1fr auto;
+  padding:6px 0; border-bottom:1px solid var(--dark-line);
+  align-items:center;
+}
+.stage-data-row:last-child { border-bottom:none; }
+.stage-data-row .lbl { color:var(--dark-text); }
+.stage-data-row .val { color:#fff; text-align:right; }
+.stage-data-row .val.ok { color:#22D17C; }
+.stage-data-row .val.warn { color:#FFB020; }
+.stage-bar {
+  display:grid; grid-template-columns: 60px 1fr 40px;
+  align-items:center; gap:8px;
+  font-size:10px;
+}
+.stage-bar-name { color:var(--dark-text); }
+.stage-bar-track { height:5px; background:#1C1C20; border-radius:3px; position:relative; overflow:hidden; }
+.stage-bar-fill { position:absolute; inset:0 auto 0 0; background:#7E9DFF; border-radius:3px; transition:width 1s cubic-bezier(.4,0,.2,1); }
+.stage-bar-fill.warn { background:#FFB020; }
+.stage-bar-fill.ok { background:#22D17C; }
+.stage-bar-val { color:#fff; text-align:right; font-size:10px; }
+.stage-pill {
+  display:inline-flex; gap:6px; padding:4px 10px;
+  background:rgba(31,138,130,.12); border:1px solid rgba(31,138,130,.3);
+  color:#7E9DFF; border-radius:100px;
+  font-family:'Geist Mono',monospace; font-size:10px;
+  align-self:flex-start;
+}
+.stage-pill.ok { background:rgba(34,209,124,.12); border-color:rgba(34,209,124,.3); color:#22D17C; }
+.stage-pill.warn { background:rgba(255,176,32,.12); border-color:rgba(255,176,32,.3); color:#FFB020; }
+.stage-stat {
+  display:flex; align-items:baseline; gap:8px;
+  padding:8px 0;
+}
+.stage-stat .num { font-family:'Geist',sans-serif; font-size:24px; font-weight:500; color:#fff; letter-spacing:-.02em; line-height:1; }
+.stage-stat .unit { font-family:'Geist Mono',monospace; font-size:10px; color:var(--dark-text); }
+.stage-stat .delta { margin-left:auto; font-family:'Geist Mono',monospace; font-size:10px; color:#22D17C; }
+.stage-stat .delta.warn { color:#FFB020; }
+
+@media (max-width:600px) {
+  .stage-media-body { grid-template-columns:1fr; }
+  .stage-media-thumb { min-height:140px; }
+}
+
+/* legacy helpers kept */
+.stage-media-img {
+  flex:1; min-height:200px;
+  background:#000 center/cover no-repeat;
+  position:relative;
+}
+.stage-media-img::after {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(180deg, transparent 60%, rgba(0,0,0,.5) 100%);
+  pointer-events:none;
+}
+.stage-media-tag {
+  position:absolute; left:12px; bottom:12px;
+  font-family:'Geist Mono', monospace; font-size:10px;
+  color:#fff; letter-spacing:.04em;
+  background:rgba(0,0,0,.55); border:1px solid rgba(255,255,255,.18);
+  padding:5px 8px; border-radius:4px;
+  backdrop-filter:blur(6px);
+}
+.stage-media-foot {
+  display:flex; gap:14px; padding:10px 14px;
+  border-top:1px solid var(--dark-line);
+  font-family:'Geist Mono', monospace; font-size:10px;
+}
+.stage-media-foot .lbl { color:#52525B; }
+.stage-media-foot .val { color:#fff; }
+.stage-media-foot .ok { color:#22D17C; }
+
+/* report mock for stage 04 */
+.report-mock {
+  flex:1; padding:20px 22px; background:#fff; color:#08090A;
+  display:flex; flex-direction:column; gap:14px;
+  position:relative; overflow:hidden;
+}
+.report-mock-h {
+  display:flex; justify-content:space-between; align-items:flex-start;
+  border-bottom:1px solid #E5E5E7; padding-bottom:12px;
+}
+.report-mock-h .brand { font-family:'Geist',sans-serif; font-weight:600; font-size:13px; letter-spacing:-.01em; }
+.report-mock-h .brand span { color:#1F8A82; }
+.report-mock-h .id { font-family:'Geist Mono',monospace; font-size:9px; color:#71717A; text-align:right; line-height:1.5; }
+.report-mock-title { font-family:'Geist',sans-serif; font-weight:500; font-size:14px; letter-spacing:-.01em; color:#08090A; }
+.report-mock-result {
+  background:#FFF7E6; border:1px solid #FFE0A3; border-radius:6px;
+  padding:12px 14px; display:flex; justify-content:space-between; align-items:center;
+}
+.report-mock-result .lbl { font-family:'Geist Mono',monospace; font-size:9px; color:#92651A; letter-spacing:.06em; text-transform:uppercase; }
+.report-mock-result .val { font-family:'Geist',sans-serif; font-weight:500; font-size:18px; color:#92651A; letter-spacing:-.02em; }
+.report-mock-rows { display:flex; flex-direction:column; gap:6px; }
+.report-mock-row {
+  display:grid; grid-template-columns:1fr auto; gap:12px;
+  padding:5px 0; border-bottom:1px dashed #E5E5E7;
+  font-size:11px; color:#52525B;
+}
+.report-mock-row .v { font-family:'Geist Mono',monospace; color:#08090A; }
+.report-mock-foot { margin-top:auto; display:flex; justify-content:space-between; font-family:'Geist Mono',monospace; font-size:9px; color:#A1A1AA; padding-top:10px; border-top:1px solid #E5E5E7; }
+
+/* ── Stage 01 live preview (rich) ── */
+.ingest-grid {
+  display:grid; grid-template-columns: auto 1fr; gap:18px;
+  padding:8px 0;
+}
+.ingest-tube-col {
+  display:flex; flex-direction:column; align-items:center; gap:14px;
+}
+.ingest-tube-meta {
+  display:flex; flex-direction:column; gap:4px; min-width:88px;
+  font-family:'Geist Mono', monospace;
+}
+.ingest-tube-meta-row {
+  display:flex; justify-content:space-between; gap:8px;
+  font-size:9px; color:var(--muted-2); letter-spacing:.04em;
+}
+.ingest-tube-meta-row .v { color:#fff; font-weight:500; }
+.ingest-info-col {
+  display:flex; flex-direction:column; gap:10px; min-width:0;
+}
+.ingest-status-card {
+  background:rgba(255,255,255,.03);
+  border:1px solid var(--dark-line);
+  border-radius:8px; padding:10px 12px;
+  display:flex; flex-direction:column; gap:8px;
+}
+.ingest-status-h {
+  display:flex; align-items:center; gap:8px;
+  font-family:'Geist Mono', monospace; font-size:10px;
+  letter-spacing:.06em; text-transform:uppercase;
+}
+.ingest-status-dot {
+  width:6px; height:6px; border-radius:50%; background:#22D17C;
+  box-shadow:0 0 6px rgba(34,209,124,.7);
+  animation:ipulse 1.6s infinite;
+}
+@keyframes ipulse { 50% { opacity:.4; } }
+.ingest-status-l { color:#22D17C; flex:1; }
+.ingest-status-eta { color:var(--muted-2); }
+.ingest-progress-bar {
+  position:relative; height:4px; background:rgba(255,255,255,.06);
+  border-radius:2px; overflow:hidden;
+}
+.ingest-progress-fill {
+  height:100%; width:25%; background:var(--blue);
+  box-shadow:0 0 8px var(--blue);
+  border-radius:2px;
+}
+.ingest-progress-val {
+  position:absolute; right:0; top:-14px;
+  font-family:'Geist Mono', monospace; font-size:9px;
+  color:var(--muted-2);
+}
+.ingest-progress-stages {
+  display:grid; grid-template-columns:repeat(4,1fr);
+  font-family:'Geist Mono', monospace; font-size:8px;
+  color:var(--muted-2); text-transform:uppercase; letter-spacing:.06em;
+  text-align:center;
+}
+.ingest-progress-stages .on { color:#fff; }
+.ingest-progress-stages .cur { color:var(--blue); }
+.ingest-progress-stages .cur::before { content:'▸ '; }
+.ingest-checks {
+  display:flex; flex-direction:column; gap:4px;
+  padding:6px 0;
+  border-top:1px solid var(--dark-line);
+  border-bottom:1px solid var(--dark-line);
+}
+.ingest-check {
+  display:grid; grid-template-columns:14px 1fr auto;
+  gap:6px; font-family:'Geist Mono', monospace;
+  font-size:9.5px; align-items:center;
+  padding:2px 0;
+}
+.ingest-check .m { font-size:7px; }
+.ingest-check.ok .m { color:#22D17C; }
+.ingest-check.pending .m { color:var(--muted-2); }
+.ingest-check span:nth-child(2) { color:var(--dark-text); }
+.ingest-check.pending span:nth-child(2) { color:var(--muted-2); }
+.ingest-check .v { color:#fff; font-size:9px; }
+.ingest-check.pending .v { color:var(--muted-2); }
+.ingest-log {
+  display:flex; flex-direction:column; gap:2px;
+  font-family:'Geist Mono', monospace; font-size:9px;
+}
+.ingest-log-row {
+  display:grid; grid-template-columns:60px 1fr; gap:8px;
+  color:var(--muted-2);
+  animation:logfade .4s;
+}
+.ingest-log-row .t { color:var(--muted-2); }
+.ingest-log-row .msg { color:var(--dark-text); }
+.ingest-log-row .msg.ok { color:#22D17C; }
+@keyframes logfade { from { opacity:0; transform:translateY(2px); } }
+
+/* ─────────────────────────────────
+   Live preview (right column) — per-stage rich content
+───────────────────────────────── */
+
+.lp { display:flex; flex-direction:column; gap:12px; padding:6px 0; }
+.lp-row { display:flex; justify-content:space-between; align-items:center; }
+.lp-h {
+  font-family:'Geist Mono', monospace; font-size:9px;
+  color:var(--muted-2); letter-spacing:.08em; text-transform:uppercase;
+}
+.lp-stat { font-family:'Geist Mono', monospace; font-size:10px; color:#fff; }
+.lp-stat .ok { color:#22D17C; }
+.lp-stat .warn { color:#FFB020; }
+.lp-divider { height:1px; background:var(--dark-line); margin:2px 0; }
+
+/* Stage 01 — intake queue */
+.lp-queue { display:flex; flex-direction:column; gap:0; font-family:'Geist Mono', monospace; font-size:10px; }
+.lp-queue-h {
+  display:grid; grid-template-columns: 50px 1fr 70px 60px;
+  gap:8px; padding:6px 0; font-size:8.5px; color:var(--muted-2);
+  letter-spacing:.06em; text-transform:uppercase;
+  border-bottom:1px solid var(--dark-line);
+}
+.lp-queue-row {
+  display:grid; grid-template-columns: 50px 1fr 70px 60px;
+  gap:8px; padding:7px 0; border-bottom:1px solid rgba(255,255,255,.04);
+  align-items:center;
+}
+.lp-queue-row:last-child { border-bottom:none; }
+.lp-queue-row .t { color:var(--muted-2); }
+.lp-queue-row .id { color:#fff; }
+.lp-queue-row .type { color:var(--dark-text); font-size:9px; }
+.lp-queue-row .st {
+  display:inline-flex; align-items:center; gap:4px; font-size:8.5px;
+  text-transform:uppercase; letter-spacing:.04em;
+}
+.lp-queue-row .st::before { content:''; width:5px; height:5px; border-radius:50%; }
+.lp-queue-row .st.in::before { background:var(--blue); box-shadow:0 0 6px var(--blue); animation:lpdot 1.4s infinite; }
+.lp-queue-row .st.qc::before { background:#FFB020; }
+.lp-queue-row .st.ok::before { background:#22D17C; }
+.lp-queue-row .st.qu::before { background:#52525B; }
+.lp-queue-row .st.in { color:var(--blue); }
+.lp-queue-row .st.qc { color:#FFB020; }
+.lp-queue-row .st.ok { color:#22D17C; }
+.lp-queue-row .st.qu { color:var(--muted-2); }
+@keyframes lpdot { 50% { opacity:.3; } }
+.lp-queue-row.now { background:rgba(31,138,130,.05); }
+.lp-summary {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:1px;
+  background:var(--dark-line); border:1px solid var(--dark-line);
+}
+.lp-summary > div {
+  background:#0E0F12; padding:8px 10px;
+  display:flex; flex-direction:column; gap:2px;
+}
+.lp-summary .l { font-family:'Geist Mono', monospace; font-size:8px; color:var(--muted-2); letter-spacing:.06em; text-transform:uppercase; }
+.lp-summary .v { font-family:'Geist Mono', monospace; font-size:18px; color:#fff; font-weight:500; letter-spacing:-.01em; }
+.lp-summary .v.blue { color:var(--blue); }
+
+/* Stage 02 — kinetic assay readout */
+.lp-kinetic {
+  position:relative; height:140px; background:#0E0F12;
+  border:1px solid var(--dark-line); border-radius:6px;
+  padding:14px 16px 22px 38px;
+}
+.lp-kinetic-svg { width:100%; height:100%; overflow:visible; }
+.lp-kinetic-axis { font-family:'Geist Mono', monospace; font-size:7px; fill:var(--muted-2); letter-spacing:.04em; }
+.lp-kinetic-grid { stroke:rgba(255,255,255,.04); stroke-width:1; }
+.lp-kinetic-curve { fill:none; stroke-width:1.4; }
+.lp-kinetic-curve.act { stroke:var(--blue); stroke-width:1.8; filter:drop-shadow(0 0 4px var(--blue)); }
+.lp-kinetic-curve.std { stroke:rgba(255,255,255,.25); stroke-dasharray:2,2; }
+.lp-kinetic-curve.mut { stroke:rgba(255,255,255,.18); }
+.lp-kinetic-marker { fill:var(--blue); }
+.lp-kinetic-label {
+  position:absolute; right:14px; top:14px;
+  font-family:'Geist Mono', monospace; font-size:8.5px;
+  color:#fff; display:flex; flex-direction:column; gap:3px; align-items:flex-end;
+}
+.lp-kinetic-label .v { color:var(--blue); font-size:11px; }
+.lp-kinetic-label .well { color:var(--muted-2); }
+.lp-stats {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:1px;
+  background:var(--dark-line); border:1px solid var(--dark-line);
+}
+.lp-stats > div {
+  background:#0E0F12; padding:8px 10px;
+  display:flex; flex-direction:column; gap:2px;
+}
+.lp-stats .l { font-family:'Geist Mono', monospace; font-size:7.5px; color:var(--muted-2); letter-spacing:.06em; text-transform:uppercase; }
+.lp-stats .v { font-family:'Geist Mono', monospace; font-size:13px; color:#fff; font-weight:500; }
+.lp-stats .v.ok { color:#22D17C; }
+.lp-stats .sub { font-family:'Geist Mono', monospace; font-size:7.5px; color:var(--muted-2); }
+
+/* Stage 03 — inference monitor */
+.lp-conf {
+  display:flex; flex-direction:column; gap:6px;
+  padding:10px 12px; background:#0E0F12;
+  border:1px solid var(--dark-line); border-radius:6px;
+}
+.lp-conf-h { display:flex; justify-content:space-between; align-items:baseline; }
+.lp-conf-l { font-family:'Geist Mono', monospace; font-size:9px; color:var(--muted-2); text-transform:uppercase; letter-spacing:.06em; }
+.lp-conf-v { font-family:'Geist Mono', monospace; font-size:22px; color:#fff; font-weight:500; letter-spacing:-.01em; }
+.lp-conf-v .pct { color:var(--blue); }
+.lp-conf-bar {
+  position:relative; height:8px; background:rgba(255,255,255,.05);
+  border-radius:4px; overflow:hidden; display:flex;
+}
+.lp-conf-bar > span { height:100%; }
+.lp-conf-bar .low { background:#52525B; }
+.lp-conf-bar .mod { background:#FFB020; box-shadow:0 0 6px rgba(255,176,32,.5); }
+.lp-conf-bar .high { background:#3F3F46; }
+.lp-conf-leg {
+  display:flex; justify-content:space-between;
+  font-family:'Geist Mono', monospace; font-size:8px;
+  color:var(--muted-2); letter-spacing:.04em;
+}
+.lp-conf-leg span:nth-child(2) { color:#FFB020; }
+
+.lp-shap { display:flex; flex-direction:column; gap:6px; }
+.lp-shap-h {
+  display:flex; justify-content:space-between;
+  font-family:'Geist Mono', monospace; font-size:8.5px;
+  color:var(--muted-2); letter-spacing:.06em; text-transform:uppercase;
+}
+.lp-shap-row {
+  display:grid; grid-template-columns: 70px 1fr 50px;
+  gap:10px; align-items:center;
+  font-family:'Geist Mono', monospace; font-size:10px;
+}
+.lp-shap-row .name { color:var(--dark-text); }
+.lp-shap-row .name.hot { color:#FFB020; }
+.lp-shap-bar {
+  position:relative; height:14px; background:transparent;
+  display:flex; align-items:center;
+}
+.lp-shap-bar::before {
+  content:''; position:absolute; left:50%; top:0; bottom:0;
+  width:1px; background:var(--dark-line);
+}
+.lp-shap-bar > div {
+  position:absolute; height:8px; top:3px;
+  background:var(--blue); border-radius:1px;
+}
+.lp-shap-bar > div.pos { left:50%; background:#FFB020; }
+.lp-shap-bar > div.neg { right:50%; background:rgba(255,255,255,.25); }
+.lp-shap-row .v { color:#fff; text-align:right; }
+.lp-shap-row .v.pos { color:#FFB020; }
+.lp-shap-row .v.neg { color:var(--muted-2); }
+
+.lp-latency {
+  display:flex; justify-content:space-between; align-items:flex-end;
+  padding:8px 0;
+}
+.lp-latency-bars { display:flex; align-items:flex-end; gap:2px; height:24px; }
+.lp-latency-bars span {
+  width:5px; background:var(--blue); opacity:.4;
+}
+.lp-latency-bars span.now { opacity:1; box-shadow:0 0 4px var(--blue); }
+.lp-latency-meta {
+  font-family:'Geist Mono', monospace; font-size:9px;
+  color:var(--muted-2); display:flex; flex-direction:column; align-items:flex-end; gap:1px;
+}
+.lp-latency-meta .v { color:#fff; font-size:11px; }
+
+/* Stage 04 — dispatch channels */
+.lp-dispatch { display:flex; flex-direction:column; gap:8px; }
+.lp-channel {
+  display:grid; grid-template-columns: 16px 1fr auto;
+  gap:10px; align-items:center;
+  padding:10px 12px; background:#0E0F12;
+  border:1px solid var(--dark-line); border-radius:6px;
+}
+.lp-channel-icon {
+  width:16px; height:16px; display:flex; align-items:center; justify-content:center;
+  color:var(--blue);
+}
+.lp-channel-body { display:flex; flex-direction:column; gap:2px; min-width:0; }
+.lp-channel-name { font-family:'Geist Mono', monospace; font-size:11px; color:#fff; }
+.lp-channel-detail { font-family:'Geist Mono', monospace; font-size:9px; color:var(--muted-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.lp-channel-st {
+  display:inline-flex; align-items:center; gap:4px;
+  font-family:'Geist Mono', monospace; font-size:8.5px;
+  text-transform:uppercase; letter-spacing:.04em;
+  padding:3px 6px; border-radius:3px;
+}
+.lp-channel-st::before { content:''; width:5px; height:5px; border-radius:50%; }
+.lp-channel-st.ok { background:rgba(34,209,124,.1); color:#22D17C; }
+.lp-channel-st.ok::before { background:#22D17C; }
+.lp-channel-st.live { background:rgba(31,138,130,.1); color:var(--blue); }
+.lp-channel-st.live::before { background:var(--blue); animation:lpdot 1.4s infinite; box-shadow:0 0 6px var(--blue); }
+.lp-channel-st.queued { background:rgba(255,255,255,.04); color:var(--muted-2); }
+.lp-channel-st.queued::before { background:var(--muted-2); }
+
+.lp-counter {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:1px;
+  background:var(--dark-line); border:1px solid var(--dark-line);
+}
+.lp-counter > div {
+  background:#0E0F12; padding:9px 10px;
+  display:flex; flex-direction:column; gap:2px;
+}
+.lp-counter .l { font-family:'Geist Mono', monospace; font-size:7.5px; color:var(--muted-2); letter-spacing:.06em; text-transform:uppercase; }
+.lp-counter .v { font-family:'Geist Mono', monospace; font-size:15px; color:#fff; font-weight:500; }
+.lp-counter .v.ok { color:#22D17C; }
+.lp-counter .v.blue { color:var(--blue); }
+
+/* 3-page report stack for stage 04 */
+.report-stack {
+  flex:1; display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:10px; padding:14px; background:#0E0F12;
+  align-items:stretch;
+  position:relative; overflow:hidden;
+}
+.report-page {
+  background:#fff; color:#08090A;
+  display:flex; flex-direction:column; gap:10px;
+  padding:14px 14px 12px;
+  border:1px solid #E5E5E7;
+  box-shadow: 0 1px 3px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.4);
+  font-size:10px; line-height:1.45;
+  position:relative;
+  min-height:0;
+  border-radius:2px;
+}
+.report-page::before {
+  content:''; position:absolute; right:0; top:0;
+  width:18px; height:18px;
+  background:linear-gradient(225deg, #F4F4F5 0%, #F4F4F5 50%, transparent 50%);
+  border-left:1px solid #E5E5E7; border-bottom:1px solid #E5E5E7;
+}
+.rp-h {
+  display:flex; justify-content:space-between; align-items:flex-start;
+  border-bottom:1px solid #E5E5E7; padding-bottom:6px; margin-bottom:2px;
+}
+.rp-brand { font-family:'Geist',sans-serif; font-weight:600; font-size:9px; letter-spacing:-.005em; }
+.rp-brand span { color:#1F8A82; }
+.rp-pagenum { font-family:'Geist Mono',monospace; font-size:7.5px; color:#A1A1AA; letter-spacing:.04em; }
+.rp-section-tag {
+  font-family:'Geist Mono',monospace; font-size:7.5px;
+  color:#71717A; letter-spacing:.08em; text-transform:uppercase;
+}
+.rp-h2 {
+  font-family:'Geist',sans-serif; font-weight:500;
+  font-size:13px; letter-spacing:-.02em; line-height:1.15;
+  color:#08090A; margin-bottom:2px;
+}
+.rp-meta {
+  display:flex; flex-direction:column; gap:3px;
+  font-family:'Geist Mono',monospace; font-size:8px;
+  color:#52525B;
+}
+.rp-meta-row { display:flex; justify-content:space-between; }
+.rp-meta-row .lbl { color:#A1A1AA; text-transform:uppercase; letter-spacing:.06em; }
+.rp-summary-box {
+  background:#FFF7E6; border:1px solid #FFE0A3;
+  padding:8px 10px; display:flex; flex-direction:column; gap:2px;
+}
+.rp-summary-lbl { font-family:'Geist Mono',monospace; font-size:7px; color:#92651A; letter-spacing:.08em; text-transform:uppercase; }
+.rp-summary-val { font-family:'Geist',sans-serif; font-weight:500; font-size:14px; color:#92651A; letter-spacing:-.02em; }
+.rp-summary-sub { font-family:'Geist Mono',monospace; font-size:8px; color:#92651A; }
+.rp-bar-row {
+  display:grid; grid-template-columns: 50px 1fr 30px;
+  gap:6px; align-items:center; font-size:8px; color:#52525B;
+}
+.rp-bar-track { height:4px; background:#F4F4F5; border-radius:2px; overflow:hidden; }
+.rp-bar-fill { height:100%; background:#1F8A82; }
+.rp-bar-fill.warn { background:#FFB020; }
+.rp-bar-val { font-family:'Geist Mono',monospace; font-size:8px; color:#08090A; text-align:right; }
+.rp-bullet {
+  display:flex; gap:6px; align-items:flex-start;
+  font-size:9px; line-height:1.4; color:#27272A;
+}
+.rp-bullet::before {
+  content:''; width:3px; height:3px; border-radius:50%; background:#1F8A82;
+  flex-shrink:0; margin-top:5px;
+}
+.rp-foot {
+  margin-top:auto; display:flex; justify-content:space-between;
+  font-family:'Geist Mono',monospace; font-size:7px; color:#A1A1AA;
+  padding-top:6px; border-top:1px solid #E5E5E7;
+}
+.rp-mini-chart {
+  height:38px; background:#FAFAFA; border:1px solid #F4F4F5;
+  display:flex; align-items:flex-end; gap:2px; padding:4px;
+}
+.rp-mini-chart > span {
+  flex:1; background:#1F8A82;
+  opacity:.85;
+}
+
+@media (max-width:900px) {
+  .report-stack { grid-template-columns: 1fr; gap:6px; }
+}
+
+/* legacy code-block (retained for safety) */
+.code-block {
+  font-family:'Geist Mono', monospace;
+  font-size:11px;
+  color:var(--dark-text); line-height:1.7;
+  white-space:pre-wrap;
+}
+.code-block .k { color:#7E9DFF; }
+.code-block .s { color:#86EFAC; }
+.code-block .n { color:#FBBF24; }
+.code-block .c { color:#52525B; }
+.code-block .ok { color:#22D17C; }
+
+.pdetail-r {
+  padding:24px;
+  display:flex; flex-direction:column; gap:14px;
+}
+.bar-row {
+  display:grid; grid-template-columns:60px 1fr 36px;
+  align-items:center; gap:10px;
+  font-family:'Geist Mono', monospace;
+  font-size:10px; color:var(--dark-text);
+}
+.bar-row-bar {
+  height:4px; background:var(--dark-3);
+  border-radius:2px; overflow:hidden;
+}
+.bar-row-fill {
+  height:100%; background:var(--blue);
+  width:0; transition:width 1s ease;
+  box-shadow:0 0 8px var(--blue-glow);
+}
+.bar-row-val { text-align:right; color:#fff; font-size:11px; }
+
+.risk-grid {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:6px;
+  margin-top:6px;
+}
+.risk-cell {
+  text-align:center; padding:14px 10px;
+  border:1px solid var(--dark-line); border-radius:8px;
+  background:var(--dark-2);
+}
+.risk-cell.on {
+  background:rgba(31,138,130,.12);
+  border-color:var(--blue);
+  box-shadow: 0 0 0 1px var(--blue), 0 0 16px var(--blue-glow);
+}
+.risk-cell-l {
+  font-family:'Geist Mono', monospace;
+  font-size:9px; color:#52525B;
+  letter-spacing:.08em; text-transform:uppercase; margin-bottom:6px;
+}
+.risk-cell.on .risk-cell-l { color:#7E9DFF; }
+.risk-cell-v {
+  font-family:'Geist Mono', monospace;
+  font-size:18px; color:#fff;
+}
+
+.timeline {
+  display:flex; flex-direction:column; gap:0;
+  margin-top:6px;
+}
+.timeline-item {
+  display:grid; grid-template-columns:12px 1fr auto;
+  gap:10px; padding:9px 0;
+  border-bottom:1px dashed var(--dark-line);
+  align-items:center;
+  font-size:11px; color:var(--dark-text);
+}
+.timeline-item:last-child { border-bottom:none; }
+.timeline-item .dot {
+  width:6px; height:6px; border-radius:50%;
+  background:var(--blue); margin-left:3px;
+}
+.timeline-item.done .dot { background:#22D17C; box-shadow:0 0 6px rgba(34,209,124,.6); }
+.timeline-item .t {
+  font-family:'Geist Mono', monospace;
+  font-size:9px; color:#52525B;
+  letter-spacing:.04em;
+}
+
+@media (max-width:900px) {
+  .pipeline-detail { grid-template-columns:1fr; }
+  .pipeline-detail-l { border-right:none; border-bottom:1px solid var(--dark-line); }
+  .pipeline { padding:18px; }
+}
+
+/* ─────────── COMPARE (matrix) ─────────── */
+.compare {  }
+.cmp-table {
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:#fff;
+  overflow:hidden;
+}
+.cmp-row {
+  display:grid;
+  grid-template-columns:1.4fr 1fr 1fr 1fr;
+  border-bottom:1px solid var(--line-soft);
+}
+.cmp-row:last-child { border-bottom:none; }
+.cmp-cell {
+  padding:18px 20px;
+  font-size:14px; color:var(--text);
+  border-right:1px solid var(--line-soft);
+  display:flex; flex-direction:column; gap:4px;
+}
+.cmp-cell:last-child { border-right:none; }
+.cmp-cell.is-us {
+  background:linear-gradient(180deg, rgba(31,138,130,.04), rgba(31,138,130,.02));
+  position:relative;
+}
+.cmp-cell.is-us::before {
+  content:''; position:absolute; left:0; right:0; bottom:-1px; height:2px;
+  background:var(--blue); opacity:0;
+}
+.cmp-row.head .cmp-cell {
+  font-family:'Geist Mono', monospace;
+  font-size:11px; color:var(--muted);
+  letter-spacing:.06em; text-transform:uppercase;
+  background:var(--bg-2);
+  padding:14px 20px;
+}
+.cmp-row.head .cmp-cell.is-us {
+  color:var(--ink);
+  background:var(--ink);
+  color:#fff;
+  border-radius:0;
+  display:flex; flex-direction:row; align-items:center; gap:8px;
+}
+.cmp-row.head .cmp-cell.is-us::after {
+  content:'★'; color:var(--blue); font-size:11px;
+}
+.cmp-cell .label {
+  font-family:'Geist Mono', monospace;
+  font-size:10px; color:var(--muted);
+  letter-spacing:.04em; text-transform:uppercase;
+  display:none;
+}
+.cmp-row:not(.head) .cmp-cell:first-child {
+  color:var(--ink); font-weight:500;
+}
+.cmp-cell .val {
+  display:flex; align-items:center; gap:8px;
+  font-size:14px; color:var(--ink);
+}
+.cmp-cell.is-us .val { color:var(--blue); font-weight:500; }
+.cmp-cell .sub {
+  font-family:'Geist Mono', monospace;
+  font-size:11px; color:var(--muted);
+}
+
+@media (max-width:768px) {
+  .cmp-table { display:flex; flex-direction:column; gap:0; border-radius:10px; }
+  .cmp-row { display:grid; grid-template-columns:1fr; }
+  .cmp-row.head { display:none; }
+  .cmp-row { padding:18px; gap:10px; border-bottom:1px solid var(--line-soft); }
+  .cmp-cell { padding:0; border-right:none; }
+  .cmp-cell:first-child {
+    font-family:'Geist Mono', monospace !important;
+    font-size:11px !important; color:var(--muted) !important;
+    letter-spacing:.06em; text-transform:uppercase;
+    margin-bottom:6px;
+  }
+  .cmp-cell .label { display:block; }
+  .cmp-cell.is-us { background:transparent; }
+  .cmp-cell.is-us .val::before {
+    content:'QLAB'; font-family:'Geist Mono', monospace;
+    font-size:9px; padding:2px 6px;
+    background:var(--blue); color:#fff; border-radius:4px;
+    margin-right:6px;
+  }
+}
+
+/* ─────────── METRICS BAND ─────────── */
+.metrics {
+  background:var(--ink);
+  color:#fff;
+  padding:96px 0;
+  border-top:1px solid var(--ink);
+  border-bottom:1px solid var(--ink);
+  position:relative;
+  overflow:hidden;
+}
+.metrics::before {
+  content:''; position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse 800px 400px at 30% 0%, rgba(31,138,130,.10), transparent 70%),
+    radial-gradient(ellipse 600px 300px at 80% 100%, rgba(31,138,130,.06), transparent 70%);
+  pointer-events:none;
+}
+.metrics-tag {
+  font-family:'Geist Mono', monospace;
+  font-size:11px; color:var(--muted-2);
+  letter-spacing:.06em; text-transform:uppercase;
+  margin-bottom:32px;
+  display:flex; align-items:center; gap:10px;
+}
+.metrics-tag::before { content:''; width:24px; height:1px; background:var(--muted-2); }
+.metrics-h {
+  font-size:clamp(28px,3.4vw,40px);
+  font-weight:500; letter-spacing:-.025em;
+  line-height:1.15; max-width:780px;
+  margin-bottom:64px;
+}
+.metrics-h .blue { color:#7E9DFF; }
+.metrics-grid {
+  display:grid; grid-template-columns:repeat(4,1fr);
+  border-top:1px solid var(--dark-line);
+}
+.metric {
+  padding:28px 20px;
+  border-right:1px solid var(--dark-line);
+}
+.metric:last-child { border-right:none; }
+.metric-l {
+  font-family:'Geist Mono', monospace;
+  font-size:10px; color:var(--muted-2);
+  letter-spacing:.06em; text-transform:uppercase;
+  margin-bottom:14px;
+}
+.metric-v {
+  font-family:'Geist Mono', monospace;
+  font-size:42px; color:#fff;
+  letter-spacing:-.03em; line-height:1;
+  font-weight:400;
+}
+.metric-v sup { font-size:18px; color:var(--muted-2); top:-.6em; }
+.metric-d {
+  font-size:13px; color:var(--dark-text);
+  line-height:1.5; margin-top:14px;
+}
+
+@media (max-width:768px) {
+  .metrics-grid { grid-template-columns:1fr 1fr; }
+  .metric { border-bottom:1px solid var(--dark-line); }
+  .metric:nth-child(2n) { border-right:none; }
+  .metric:nth-last-child(-n+2) { border-bottom:none; }
+  .metric-v { font-size:32px; }
+}
+
+/* ─────────── PARTNERS ─────────── */
+.partners {  }
+.part-grid {
+  display:grid; grid-template-columns:1fr 2fr;
+  gap:48px; align-items:start;
+}
+.part-side h3 {
+  font-size:24px; font-weight:500;
+  letter-spacing:-.02em; line-height:1.2;
+  margin-bottom:14px;
+}
+.part-side p { font-size:14px; color:var(--text); line-height:1.55; max-width:280px; }
+.part-side .btn { margin-top:24px; }
+
+.part-list {
+  border:1px solid var(--line); border-radius:10px;
+  background:#fff;
+  overflow:hidden;
+}
+.part-row {
+  display:grid; grid-template-columns:auto 1fr auto auto;
+  gap:20px; padding:18px 22px;
+  border-bottom:1px solid var(--line-soft);
+  align-items:center;
+  transition:background .12s;
+}
+.part-row:hover { background:var(--bg); }
+.part-row:last-child { border-bottom:none; }
+.part-logo {
+  width:36px; height:36px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  display:grid; place-items:center;
+  font-family:'Geist Mono', monospace;
+  font-size:10px; color:var(--ink);
+  font-weight:600;
+  background:var(--bg);
+}
+.part-name { font-size:14px; font-weight:500; color:var(--ink); }
+.part-meta {
+  font-family:'Geist Mono', monospace;
+  font-size:11px; color:var(--muted);
+  letter-spacing:.04em;
+}
+.part-status {
+  font-family:'Geist Mono', monospace;
+  font-size:10px; padding:3px 8px;
+  border-radius:100px;
+  letter-spacing:.04em; text-transform:uppercase;
+}
+.part-status.active { background:rgba(0,166,86,.10); color:var(--green); }
+.part-status.pending { background:rgba(217,119,6,.10); color:var(--amber); }
+
+@media (max-width:900px) {
+  .part-grid { grid-template-columns:1fr; gap:32px; }
+  .part-row { grid-template-columns:auto 1fr auto; gap:14px; padding:14px 16px; }
+  .part-meta { display:none; }
+}
+
+/* ─────────── NEWS ─────────── */
+.news { background:var(--bg); }
+.news-list {
+  border-top:1px solid var(--line);
+}
+.news-item {
+  display:grid;
+  grid-template-columns:120px 1fr auto auto;
+  gap:32px; align-items:center;
+  padding:24px 4px;
+  border-bottom:1px solid var(--line);
+  cursor:pointer;
+  transition:background .15s, padding-left .2s;
+}
+.news-item:hover { background:rgba(31,138,130,.02); padding-left:16px; }
+.news-date {
+  font-family:'Geist Mono', monospace;
+  font-size:12px; color:var(--muted);
+}
+.news-title {
+  font-size:17px; font-weight:500; color:var(--ink);
+  letter-spacing:-.015em; line-height:1.3;
+}
+.news-cat {
+  font-family:'Geist Mono', monospace;
+  font-size:10px; color:var(--blue);
+  background:var(--blue-tint);
+  padding:3px 8px; border-radius:4px;
+  letter-spacing:.04em; text-transform:uppercase;
+}
+.news-arrow {
+  font-family:'Geist Mono', monospace;
+  font-size:14px; color:var(--muted);
+  transition:transform .2s;
+}
+.news-item:hover .news-arrow { color:var(--blue); transform:translateX(4px); }
+
+@media (max-width:768px) {
+  .news-item { grid-template-columns:1fr; gap:8px; padding:16px 0; }
+  .news-date { font-size:11px; }
+  .news-title { font-size:15px; }
+  .news-arrow { display:none; }
+}
+
+/* ─────────── CTA ─────────── */
+.cta {
+  position:relative;
+  padding:120px 0;
+  background:var(--ink);
+  color:#fff;
+  overflow:hidden;
+  border-top:1px solid var(--dark-line);
+}
+.cta::before {
+  content:''; position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse 1000px 400px at 50% 100%, rgba(31,138,130,.16), transparent 70%);
+}
+.cta::after {
+  content:''; position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+  background-size:48px 48px;
+  mask-image: radial-gradient(ellipse 600px 300px at 50% 50%, black 30%, transparent 75%);
+  pointer-events:none;
+}
+.cta-inner { position:relative; text-align:center; }
+.cta-tag {
+  font-family:'Geist Mono', monospace;
+  font-size:11px; color:var(--muted-2);
+  letter-spacing:.06em; text-transform:uppercase;
+  margin-bottom:24px;
+}
+.cta h2 {
+  font-size:clamp(36px, 5.5vw, 64px);
+  font-weight:500; letter-spacing:-.03em;
+  line-height:1.05; margin-bottom:24px;
+  max-width:760px; margin-left:auto; margin-right:auto;
+}
+.cta h2 .blue { color:#7E9DFF; }
+.cta p {
+  font-size:16px; color:var(--dark-text); line-height:1.55;
+  max-width:480px; margin:0 auto 32px;
+}
+.cta-actions { display:inline-flex; gap:8px; flex-wrap:wrap; justify-content:center; }
+.cta .btn-blue { padding:11px 18px; font-size:14px; }
+.cta .btn-outline {
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--dark-line); color:#fff;
+}
+.cta .btn-outline:hover { background:rgba(255,255,255,.08); border-color:#fff; }
+
+/* ─────────── VALUE STRIP (3 cards on home) ─────────── */
+.vstrip { padding:120px 0 40px; background:var(--bg); }
+.vstrip-grid {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  border-top:1px solid var(--line);
+  border-left:1px solid var(--line);
+}
+.vstrip-card {
+  display:flex; flex-direction:column; gap:14px;
+  padding:36px 32px 32px;
+  border-right:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  text-decoration:none; color:inherit;
+  background:#fff;
+  transition:background .15s;
+  position:relative;
+  min-height:240px;
+}
+.vstrip-card:hover { background:#FAFAFA; }
+.vstrip-card:hover .vstrip-arrow { transform:translateX(4px); }
+.vstrip-num {
+  font-family:'Geist Mono', monospace;
+  font-size:11px; color:var(--muted-2);
+  letter-spacing:.06em;
+}
+.vstrip-h {
+  font-size:22px; font-weight:500;
+  letter-spacing:-.02em; color:var(--ink);
+  line-height:1.2;
+}
+.vstrip-d {
+  font-size:14px; line-height:1.6;
+  color:var(--text);
+  flex:1;
+}
+.vstrip-meta {
+  display:flex; justify-content:space-between; align-items:center;
+  font-family:'Geist Mono', monospace;
+  font-size:11px; color:var(--muted);
+  letter-spacing:.04em; text-transform:uppercase;
+  padding-top:14px; border-top:1px solid var(--line-soft);
+}
+.vstrip-arrow {
+  font-family:'Geist',sans-serif;
+  color:var(--blue); font-size:14px;
+  text-transform:none;
+  transition:transform .15s;
+}
+@media (max-width:900px) {
+  .vstrip { padding:60px 0 20px; }
+  .vstrip-grid { grid-template-columns:1fr; }
+  .vstrip-card { min-height:auto; padding:28px 24px; }
+}
+
+/* ─────────── HOME PARTNERS ROW ─────────── */
+.hpart { padding:60px 0 100px; background:var(--bg); }
+.hpart-h {
+  font-family:'Geist Mono',monospace;
+  font-size:11px; color:var(--muted);
+  letter-spacing:.08em; text-transform:uppercase;
+  text-align:center; margin-bottom:24px;
+}
+.hpart-row {
+  display:flex; flex-wrap:wrap;
+  justify-content:center; gap:32px 56px;
+  font-size:14px; color:var(--muted);
+  font-weight:500; letter-spacing:-.005em;
+  padding:24px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+}
+@media (max-width:600px) {
+  .hpart-row { gap:14px 24px; font-size:12px; }
+  .hpart { padding:32px 0 60px; }
+}
+
+/* ─────────── FOOTER ─────────── */
+footer {
+  background:var(--ink);
+  border-top:1px solid var(--dark-line);
+  color:var(--dark-text);
+  padding:64px 0 24px;
+}
+.foot {
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr 1fr 1fr;
+  gap:32px;
+  padding-bottom:48px;
+  border-bottom:1px solid var(--dark-line);
+}
+.foot-brand .logo { color:#fff; }
+.foot-brand .logo-mark {
+  background-image:url('img/logo-mark-white.png') !important;
+  background-color:transparent !important;
+}
+.foot-brand p { font-size:13px; color:var(--dark-text); line-height:1.55; max-width:280px; margin-top:14px; }
+.foot-status {
+  display:inline-flex; align-items:center; gap:6px;
+  font-family:'Geist Mono', monospace;
+  font-size:11px; color:#22D17C;
+  margin-top:18px;
+  padding:5px 10px;
+  background:rgba(34,209,124,.08);
+  border:1px solid rgba(34,209,124,.2);
+  border-radius:100px;
+}
+.foot-status::before {
+  content:''; width:5px; height:5px; border-radius:50%; background:#22D17C;
+  box-shadow:0 0 6px rgba(34,209,124,.6);
+}
+.foot-col h4 {
+  font-family:'Geist Mono', monospace;
+  font-size:10px; color:var(--muted-2);
+  letter-spacing:.08em; text-transform:uppercase;
+  margin-bottom:16px;
+}
+.foot-col ul { list-style:none; display:flex; flex-direction:column; gap:9px; }
+.foot-col a { font-size:13px; color:var(--dark-text); }
+.foot-col a:hover { color:#fff; }
+.foot-bot {
+  padding-top:24px;
+  display:flex; justify-content:space-between; align-items:center;
+  flex-wrap:wrap; gap:12px;
+  font-family:'Geist Mono', monospace;
+  font-size:11px; color:#52525B;
+}
+.foot-bot .links { display:flex; gap:18px; }
+.foot-bot .links a { color:#52525B; }
+.foot-bot .links a:hover { color:var(--dark-text); }
+
+@media (max-width:900px) {
+  .foot { grid-template-columns:1fr 1fr; gap:32px 16px; }
+  .foot-brand { grid-column:1 / -1; }
+}
+
+/* ─────────── MOBILE STICKY ─────────── */
+.m-sticky {
+  display:none;
+  position:fixed; bottom:14px; left:14px; right:14px; z-index:60;
+  padding:13px 18px;
+  background:var(--ink); color:#fff;
+  border-radius:100px;
+  font-size:14px; font-weight:500;
+  align-items:center; justify-content:space-between;
+  box-shadow:0 12px 36px rgba(0,0,0,.22);
+  transform:translateY(120%);
+  transition:transform .3s ease;
+}
+.m-sticky.show { transform:none; }
+.m-sticky .arr {
+  width:24px; height:24px; border-radius:50%;
+  background:var(--blue); display:grid; place-items:center;
+  font-family:'Geist Mono', monospace; font-size:11px;
+}
+@media (max-width:900px) {
+  .m-sticky { display:flex; }
+  footer { padding-bottom:96px; }
+}
+
+/* ─────────── ANIMATIONS ─────────── */
+.reveal { opacity:0; transform:translateY(16px); transition:opacity .7s, transform .7s; }
+.reveal.in { opacity:1; transform:none; }
+.d2 { transition-delay:.06s; }
+.d3 { transition-delay:.12s; }
+.d4 { transition-delay:.18s; }
+.d5 { transition-delay:.24s; }
+</style>
+</head>
+<style>
+.phead { padding:120px 0 80px; background:var(--bg); position:relative; overflow:hidden; }
+.phead-grid {
+  display:grid; grid-template-columns: minmax(0,1.05fr) minmax(0,.95fr);
+  gap:64px; align-items:center;
+}
+@media (max-width:980px) { .phead-grid { grid-template-columns:1fr; gap:40px; } }
+.phead-visual {
+  position:relative; aspect-ratio: 4/5;
+  border-radius:14px; overflow:hidden;
+  border:1px solid var(--line);
+  box-shadow: 0 30px 80px -30px rgba(0,0,0,.25), 0 0 0 1px rgba(0,0,0,.02);
+  background:#0b0b0d;
+}
+.phead-visual img {
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:cover; display:block;
+  filter: contrast(1.02) saturate(.95);
+}
+.phead-visual::after {
+  content:''; position:absolute; inset:0;
+  background: linear-gradient(180deg, transparent 55%, rgba(8,9,10,.55) 100%);
+  pointer-events:none;
+}
+.phead-visual-meta {
+  position:absolute; left:18px; right:18px; bottom:16px;
+  display:flex; justify-content:space-between; align-items:flex-end;
+  font-family:'Geist Mono', monospace; font-size:10px;
+  letter-spacing:.08em; text-transform:uppercase;
+  color:rgba(255,255,255,.85); z-index:2;
+}
+.phead-visual-meta .live::before {
+  content:''; display:inline-block; width:6px; height:6px; border-radius:50%;
+  background:#22D17C; margin-right:6px; box-shadow:0 0 8px #22D17C;
+  vertical-align:middle;
+}
+.phead-visual-corners::before,
+.phead-visual-corners::after {
+  content:''; position:absolute; width:18px; height:18px;
+  border:1px solid rgba(255,255,255,.4); z-index:2;
+}
+.phead-visual-corners::before { top:12px; left:12px; border-right:none; border-bottom:none; }
+.phead-visual-corners::after  { top:12px; right:12px; border-left:none; border-bottom:none; }
+
+/* photo strip */
+.photo-strip {
+  display:grid; grid-template-columns: 1.1fr 1fr 1.3fr;
+  gap:14px; margin:48px 0 0;
+}
+@media (max-width:780px) { .photo-strip { grid-template-columns:1fr 1fr; } .photo-strip > *:nth-child(3) { grid-column:1/-1; } }
+.photo-strip figure {
+  position:relative; margin:0; aspect-ratio: 4/3;
+  border-radius:10px; overflow:hidden;
+  border:1px solid var(--line); background:#0b0b0d;
+}
+.photo-strip img {
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block;
+}
+.photo-strip figcaption {
+  position:absolute; left:12px; bottom:10px; right:12px;
+  font-family:'Geist Mono', monospace; font-size:10px;
+  letter-spacing:.08em; text-transform:uppercase;
+  color:#fff; z-index:2; display:flex; justify-content:space-between;
+  text-shadow: 0 1px 4px rgba(0,0,0,.6);
+}
+.photo-strip figure::after {
+  content:''; position:absolute; inset:0;
+  background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,.55) 100%);
+}
+
+.phead::before {
+  content:''; position:absolute; inset:0;
+  background: radial-gradient(ellipse 700px 240px at 30% 30%, rgba(31,138,130,.08), transparent 60%);
+  pointer-events:none;
+}
+.phead .wrap { position:relative; z-index:2; }
+.phead-eyebrow { display:flex; gap:10px; align-items:center; margin-bottom:28px; }
+.phead-h1 {
+  font-size:clamp(36px, 5vw, 64px);
+  font-weight:500; letter-spacing:-.04em; line-height:1.05;
+  color:var(--ink); max-width:820px;
+  margin-bottom:22px;
+}
+.phead-h1 .blue { color:var(--blue); }
+.phead-sub {
+  font-size:17px; line-height:1.55; color:var(--text);
+  max-width:600px; margin-bottom:36px;
+}
+.phead-meta {
+  display:flex; gap:28px; flex-wrap:wrap;
+  font-family:'Geist Mono', monospace; font-size:11px;
+  color:var(--muted); letter-spacing:.06em; text-transform:uppercase;
+}
+.phead-meta > div { display:flex; align-items:center; gap:8px; }
+.phead-meta .dot { width:5px; height:5px; border-radius:50%; background:var(--blue); }
+.msec { padding:80px 0 40px; background:var(--bg); }
+@media (max-width:600px) { .phead { padding:80px 0 40px; } .msec { padding:40px 0 20px; } }
+</style>
+<body>
+
+<!-- ═══════════ NAV ═══════════ -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <span class="logo-mark"></span>
+      QLAB BIO
+      <span class="logo-tag">v1.4</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html" class="active">Home</a>
+      <a href="about.html">About</a>
+      <a href="business.html">Platform</a>
+      <a href="news.html">News</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div class="nav-spacer"></div>
+    <div class="nav-actions">
+      <button id="langToggle" class="btn btn-ghost" aria-label="Toggle language" style="padding:6px 10px; font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:.04em;">
+        <span data-lang-current>KR</span>
+        <span style="color:var(--muted-2)">/</span>
+        <span style="color:var(--muted-2)" data-lang-other>EN</span>
+      </button>
+      <a href="#" class="btn btn-ghost" data-i18n data-kr="로그인" data-en="Sign in">로그인</a>
+      <a href="contact.html" class="btn btn-dark"><span data-i18n data-kr="파트너십 문의" data-en="Talk to sales">파트너십 문의</span> <span class="kbd">↵</span></a>
+    </div>
+    <button class="nav-burger" id="burger" aria-label="Open menu"><span></span></button>
+  </div>
+</nav>
+
+<!-- mobile menu -->
+<div class="menu" id="menu">
+  <button class="menu-close" id="menuClose">×</button>
+  <a href="index.html">Home <span>01</span></a>
+  <a href="about.html">About <span>02</span></a>
+  <a href="business.html">Platform <span>03</span></a>
+  <a href="news.html">News <span>04</span></a>
+  <a href="contact.html">Contact <span>05</span></a>
+  <div class="menu-foot">
+    <a href="contact.html" class="btn btn-dark">파트너십 문의 →</a>
+  </div>
+</div>
+
+
+<!-- ═══════════ PAGE HEADER ═══════════ -->
+<header class="phead">
+  <div class="wrap">
+    <div class="phead-grid">
+      <div class="phead-text">
+        <div class="phead-eyebrow">
+          <span class="hero-tag-pill">PLATFORM</span>
+          <span style="font-family:'Geist Mono',monospace; font-size:11px; color:var(--muted)">qlb-v3.2 · production</span>
+        </div>
+        <h1 class="phead-h1">
+          타액 한 방울로<br/>
+          <span class="blue">인지 건강을 측정합니다.</span>
+        </h1>
+        <p class="phead-sub">
+          채혈 없이, 48시간 안에, 5종 바이오마커와 AI 모델로 인지장애 위험도를 정량 분석하는 B2B 플랫폼. 의료기관·검진센터·보험사를 위한 API와 보고서 시스템을 제공합니다.
+        </p>
+        <div class="phead-meta">
+          <div><span class="dot"></span>채혈 불필요</div>
+          <div><span class="dot"></span>48시간 내 결과</div>
+          <div><span class="dot"></span>90% 이상 정확도</div>
+          <div><span class="dot"></span>EMR 연동</div>
+        </div>
+      </div>
+      <figure class="phead-visual phead-visual-corners">
+        <img src="img/tube.png" alt="QLAB BIO 자가 채취 키트 — 타액 검체 튜브" />
+        <div class="phead-visual-meta">
+          <span class="live">SAMPLE · QLB-04821</span>
+          <span>1.5 ML · SALIVA</span>
+        </div>
+      </figure>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════ PROBLEM ═══════════ -->
+<section class="problem">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num"><span>SECTION</span><strong>01 / Why now</strong></div>
+      <div>
+        <h2 class="sec-title">조기 발견의 <span class="blue">기회 비용</span><br/><span class="light">— 일쪽 의료 부담을 측정 가능하게.</span></h2>
+        <p class="sec-lead">한국은 세계에서 가장 빠르게 고령화되는 사회입니다. 그러나 인지장애 환자의 절반은 자신의 상태를 모르며, 조기 선별이 늦어질수록 사회적 비용은 기하급수적으로 증가합니다.</p>
+      </div>
+    </div>
+
+    <div class="prob-table">
+      <div class="prob-th">
+        <span>#</span><span>Issue</span><span>Detail</span><span style="text-align:right">Magnitude</span>
+      </div>
+      <div class="prob-row reveal">
+        <span class="prob-row-i">001</span>
+        <span class="prob-row-name">국내 치매 환자 <span class="tag">2025</span></span>
+        <span class="prob-row-desc">2050년에는 300만 명을 넘어설 전망. 65세 이상 4명 중 1명이 인지장애 위험군.</span>
+        <span class="prob-row-num">100<small>만 명</small></span>
+      </div>
+      <div class="prob-row reveal d2">
+        <span class="prob-row-i">002</span>
+        <span class="prob-row-name">경도인지장애(MCI) 비율 <span class="tag">65+</span></span>
+        <span class="prob-row-desc">65세 이상 인구의 28%, 이 중 절반은 5년 내 치매로 진행합니다.</span>
+        <span class="prob-row-num">28<small>%</small></span>
+      </div>
+      <div class="prob-row reveal d3">
+        <span class="prob-row-i">003</span>
+        <span class="prob-row-name">연간 사회적 비용 <span class="tag">KR</span></span>
+        <span class="prob-row-desc">의료비·요양비·간병 비용을 포함한 직·간접 비용 추정치.</span>
+        <span class="prob-row-num">24<small>조 원</small></span>
+      </div>
+      <div class="prob-row reveal d4">
+        <span class="prob-row-i">004</span>
+        <span class="prob-row-name">조기개입 시 절감 효과 <span class="tag">5y+</span></span>
+        <span class="prob-row-desc">머신경장애 단계에서 5년 이상 미리 개입하면 평균 비용이 절반 이하로 줄어듭니다.</span>
+        <span class="prob-row-num">−50<small>%</small></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ HOW IT WORKS ═══════════ -->
+<section class="how">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num"><span>SECTION</span><strong>02 / How it works</strong></div>
+      <div>
+        <h2 class="sec-title">타액 한 방울에서 <span class="blue">위험도 보고서</span>까지<br/><span class="light">— 평균 48시간.</span></h2>
+        <p class="sec-lead">의료인 도움 없이 자가 채취한 검체를 받아 신경호르몬·Aβ 단백질을 동시 분석하고, AI 모델이 위험도를 3단계로 분류합니다.</p>
+      </div>
+    </div>
+
+    <div class="pipeline">
+      <div class="pipeline-bar">
+        <span class="live">Pipeline online</span>
+        <span class="sep">·</span>
+        <span>4 stages</span>
+        <span class="sep">·</span>
+        <span>avg. 1d 18h</span>
+        <span style="margin-left:auto; color:#fff">QLB-v3.2</span>
+      </div>
+
+      <div class="pipeline-flow" id="pflow">
+        <div class="pipeline-step active" data-i="0">
+          <div class="pipeline-step-i"><span>STAGE 01</span><span class="dur">~5min</span></div>
+          <h4>타액 채취</h4>
+          <p>의료인 없이 자가 채취. 상온 1주 보관, 우편 회송으로 검사실에 도착.</p>
+        </div>
+        <div class="pipeline-step" data-i="1">
+          <div class="pipeline-step-i"><span>STAGE 02</span><span class="dur">~24h</span></div>
+          <h4>바이오마커 분석</h4>
+          <p>신경호르몬 3종과 Aβ 단백질 2종을 동시에 정량 분석.</p>
+        </div>
+        <div class="pipeline-step" data-i="2">
+          <div class="pipeline-step-i"><span>STAGE 03</span><span class="dur">~2min</span></div>
+          <h4>AI 위험도 산출</h4>
+          <p>딥러닝 모델이 5종 마커를 통합 분석해 위험도를 산출. 정확도 90% 이상.</p>
+        </div>
+        <div class="pipeline-step" data-i="3">
+          <div class="pipeline-step-i"><span>STAGE 04</span><span class="dur">~2h</span></div>
+          <h4>리포트 발급</h4>
+          <p>3단계 위험도와 마커별 상세 수치를 EMR·이메일·환자 포털로 발송.</p>
+        </div>
+      </div>
+
+      <div class="pipeline-detail">
+        <!-- LEFT: code-style log -->
+        <div class="pipeline-detail-l">
+          <div class="pdetail-h">
+            <span id="pdLabel">request · POST /v1/samples</span>
+            <span class="ok">200 OK · 142ms</span>
+          </div>
+          <div id="pdCode"></div>
+        </div>
+
+        <!-- RIGHT: live visualization -->
+        <div class="pdetail-r">
+          <div class="pdetail-h">
+            <span>Live preview</span>
+            <span style="color:#fff" id="pdRight">Sample QLB-04821</span>
+          </div>
+          <div id="pdViz"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ COMPARE ═══════════ -->
+<section class="compare">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num"><span>SECTION</span><strong>03 / Compare</strong></div>
+      <div>
+        <h2 class="sec-title">기존 방식과의 <span class="blue">차이</span></h2>
+        <p class="sec-lead">기존 검사가 해결하지 못한 세 가지 과제 — 접근성, 반복성, 비용. 큐랩바이오는 이 세 지표를 모두 개선합니다.</p>
+      </div>
+    </div>
+
+    <div class="cmp-table">
+      <div class="cmp-row head">
+        <div class="cmp-cell">기준</div>
+        <div class="cmp-cell is-us">QLAB BIO</div>
+        <div class="cmp-cell">PET / MRI</div>
+        <div class="cmp-cell">혈액 검사</div>
+      </div>
+      <div class="cmp-row">
+        <div class="cmp-cell">검체</div>
+        <div class="cmp-cell is-us"><span class="label">QLAB</span><span class="val">타액 (자가)</span><span class="sub">non-invasive</span></div>
+        <div class="cmp-cell"><span class="label">PET/MRI</span><span class="val">영상 촬영</span><span class="sub">imaging</span></div>
+        <div class="cmp-cell"><span class="label">Blood</span><span class="val">정맥 채혈</span><span class="sub">invasive</span></div>
+      </div>
+      <div class="cmp-row">
+        <div class="cmp-cell">비용</div>
+        <div class="cmp-cell is-us"><span class="val">~10만원</span><span class="sub">consumer-friendly</span></div>
+        <div class="cmp-cell"><span class="val">100만원+</span><span class="sub">premium</span></div>
+        <div class="cmp-cell"><span class="val">30~50만원</span><span class="sub">mid-tier</span></div>
+      </div>
+      <div class="cmp-row">
+        <div class="cmp-cell">결과 시간</div>
+        <div class="cmp-cell is-us"><span class="val">≤ 48시간</span><span class="sub">2-day TAT</span></div>
+        <div class="cmp-cell"><span class="val">3~5일</span><span class="sub">imaging+read</span></div>
+        <div class="cmp-cell"><span class="val">2~4일</span><span class="sub">lab batch</span></div>
+      </div>
+      <div class="cmp-row">
+        <div class="cmp-cell">반복 검사</div>
+        <div class="cmp-cell is-us"><span class="val">부담 없음</span><span class="sub">monthly OK</span></div>
+        <div class="cmp-cell"><span class="val">방사선 노출</span><span class="sub">limit / yr</span></div>
+        <div class="cmp-cell"><span class="val">침습 부담</span><span class="sub">2~4 / yr</span></div>
+      </div>
+      <div class="cmp-row">
+        <div class="cmp-cell">접근 채널</div>
+        <div class="cmp-cell is-us"><span class="val">검진센터·보험·홈</span><span class="sub">B2B2C</span></div>
+        <div class="cmp-cell"><span class="val">대형병원만</span><span class="sub">tier-1</span></div>
+        <div class="cmp-cell"><span class="val">의료기관</span><span class="sub">clinic</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ CTA ═══════════ -->
+<section class="cta">
+  <div class="wrap cta-inner" style="position:relative; z-index:2">
+    <div class="cta-tag">— Build with QLAB BIO —</div>
+    <h2>치매 없는 미래를<br/><span class="blue">함께 설계합니다.</span></h2>
+    <p>인지 건강의 다음 표준을 함께 정의해 보세요.</p>
+    <div class="cta-actions">
+      <a href="contact.html" class="btn btn-blue">파트너십 시작하기 <span class="arrow">→</span></a>
+      <a href="business.html" class="btn btn-outline">플랫폼 자료 다운로드 <span class="arrow">↓</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ FOOTER ═══════════ -->
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div class="foot-brand">
+        <a href="index.html" class="logo" style="color:#fff"><span class="logo-mark"></span>QLAB BIO</a>
+        <p>생체지표 기반 인지장애 조기진단 플랫폼. 한 방울의 타액에서 미래의 위험도를 봅니다.</p>
+        <span class="foot-status">All systems normal</span>
+      </div>
+      <div class="foot-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="business.html">플랫폼</a></li>
+          <li><a href="business.html">바이오마커</a></li>
+          <li><a href="business.html">AI 모델</a></li>
+          <li><a href="business.html">API</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="about.html">회사소개</a></li>
+          <li><a href="about.html">연혁</a></li>
+          <li><a href="news.html">뉴스룸</a></li>
+          <li><a href="#">채용</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="#">백서</a></li>
+          <li><a href="#">임상 데이터</a></li>
+          <li><a href="#">개발자 문서</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:dntkswlsdn@qlabbio.com">dntkswlsdn@qlabbio.com</a></li>
+          <li><a href="tel:01045453220">010-4545-3220</a></li>
+          <li><a href="contact.html">문의 양식</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bot">
+      <span>© 2026 QLAB BIO Inc.</span>
+      <div class="links">
+        <a href="#">개인정보처리방침</a>
+        <a href="#">이용약관</a>
+        <a href="#">보안</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<a href="contact.html" class="m-sticky" id="mSticky">
+  파트너십 문의하기 <span class="arr">→</span>
+</a>
+
+<script>
+// nav scroll
+const nav = document.getElementById('nav');
+const mSticky = document.getElementById('mSticky');
+window.addEventListener('scroll', () => {
+  const y = window.scrollY;
+  nav.classList.toggle('scrolled', y > 8);
+  if (mSticky) mSticky.classList.toggle('show', y > 600);
+});
+
+// menu
+const menu = document.getElementById('menu');
+const burger = document.getElementById('burger');
+const menuClose = document.getElementById('menuClose');
+const openMenu = () => { menu.classList.add('open'); document.body.classList.add('menu-open'); };
+const closeMenu = () => { menu.classList.remove('open'); document.body.classList.remove('menu-open'); };
+burger.addEventListener('click', openMenu);
+menuClose.addEventListener('click', closeMenu);
+menu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+
+// reveal
+const io = new IntersectionObserver(es => {
+  es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+}, { threshold:.1, rootMargin:'0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+// pipeline interaction
+const pSteps = document.querySelectorAll('#pflow .pipeline-step');
+const pdLabel = document.getElementById('pdLabel');
+const pdCode = document.getElementById('pdCode');
+const pdRight = document.getElementById('pdRight');
+const pdViz = document.getElementById('pdViz');
+const HAS_PIPELINE = pSteps.length && pdLabel && pdCode;
+
+const pipelineData = [
+  {
+    label: 'POST /v1/samples · ingest',
+    code: `<span class="c">// stage 01 · sample ingest</span>
+<span class="k">curl</span> -X POST https://api.qlabbio.com/v1/samples \\
+  -H <span class="s">"Authorization: Bearer ●●●●●●"</span> \\
+  -d '{
+    <span class="k">"id"</span>: <span class="s">"QLB-2026-04821"</span>,
+    <span class="k">"volume_ml"</span>: <span class="n">3.5</span>,
+    <span class="k">"collected_at"</span>: <span class="s">"2026-04-21T09:14Z"</span>,
+    <span class="k">"channel"</span>: <span class="s">"self-collect"</span>
+  }'
+
+<span class="c">// response</span>
+{
+  <span class="k">"status"</span>: <span class="ok">"queued"</span>,
+  <span class="k">"sample_id"</span>: <span class="s">"QLB-2026-04821"</span>,
+  <span class="k">"eta"</span>: <span class="s">"~24h"</span>
+}`,
+    rightLabel: 'Sample QLB-04821',
+    media: `
+      <div class="stage-media-bar">
+        <span>Stage 01 · Sample collection</span>
+        <span class="meta">QLB-2026-04821</span>
+      </div>
+      <div class="stage-media-body">
+        <div class="stage-media-thumb contain" style="background-image:url('img/tube.png');">
+          <span class="stage-media-thumb-tag">Self-collect kit</span>
+        </div>
+        <div class="stage-data">
+          <h5>검체 접수 결과</h5>
+          <span class="stage-pill ok">● QC PASS · sample valid</span>
+          <div class="stage-stat">
+            <span class="num">3.5</span><span class="unit">mL</span>
+            <span class="delta">권장량 충족</span>
+          </div>
+          <div class="stage-data-row"><span class="lbl">Sample ID</span><span class="val">QLB-2026-04821</span></div>
+          <div class="stage-data-row"><span class="lbl">Collected at</span><span class="val">2026-04-21 09:14</span></div>
+          <div class="stage-data-row"><span class="lbl">Channel</span><span class="val">self-collect</span></div>
+          <div class="stage-data-row"><span class="lbl">Storage temp</span><span class="val ok">22.4 ℃ · OK</span></div>
+          <div class="stage-data-row"><span class="lbl">Transit time</span><span class="val">18h 22m</span></div>
+          <div class="stage-data-row"><span class="lbl">Protocol</span><span class="val">QLB-COL-v2</span></div>
+        </div>
+      </div>`,
+    viz: `
+      <div class="ingest-grid">
+        <!-- left: tube illustration -->
+        <div class="ingest-tube-col">
+          <svg width="64" height="128" viewBox="0 0 80 160" style="display:block;">
+            <rect x="20" y="0" width="40" height="14" rx="2" fill="#fff"/>
+            <rect x="22" y="14" width="36" height="124" rx="0" fill="none" stroke="#fff" stroke-width="1.2"/>
+            <path d="M 22 138 Q 22 158, 40 158 Q 58 158, 58 138" fill="none" stroke="#fff" stroke-width="1.2"/>
+            <rect x="23" y="80" width="34" height="58" fill="rgba(31,138,130,.5)">
+              <animate attributeName="height" values="58;60;58" dur="2.4s" repeatCount="indefinite"/>
+              <animate attributeName="y" values="80;78;80" dur="2.4s" repeatCount="indefinite"/>
+            </rect>
+            <path d="M 22 80 L 58 80" stroke="#7E9DFF" stroke-width="1.5"/>
+            <text x="40" y="80" text-anchor="middle" dy="-6" fill="#7E9DFF" font-family="Geist Mono" font-size="9">3.5 mL</text>
+          </svg>
+          <div class="ingest-tube-meta">
+            <div class="ingest-tube-meta-row"><span>FILL</span><span class="v">3.5 / 4.0 mL</span></div>
+            <div class="ingest-tube-meta-row"><span>TEMP</span><span class="v">4.2 °C</span></div>
+            <div class="ingest-tube-meta-row"><span>pH</span><span class="v">7.1</span></div>
+          </div>
+        </div>
+
+        <!-- right: status + checks + log -->
+        <div class="ingest-info-col">
+          <div class="ingest-status-card">
+            <div class="ingest-status-h">
+              <span class="ingest-status-dot"></span>
+              <span class="ingest-status-l">QC PASS</span>
+              <span class="ingest-status-eta">eta · ~24h</span>
+            </div>
+            <div class="ingest-progress-bar">
+              <div class="ingest-progress-fill"></div>
+              <span class="ingest-progress-val">25%</span>
+            </div>
+            <div class="ingest-progress-stages">
+              <span class="on">Receive</span><span class="on">QC</span><span class="cur">Aliquot</span><span>Assay</span>
+            </div>
+          </div>
+
+          <div class="ingest-checks">
+            <div class="ingest-check ok"><span class="m">●</span><span>volume ≥ 2.0 mL</span><span class="v">3.5</span></div>
+            <div class="ingest-check ok"><span class="m">●</span><span>chain of custody</span><span class="v">verified</span></div>
+            <div class="ingest-check ok"><span class="m">●</span><span>collection within 72h</span><span class="v">38h</span></div>
+            <div class="ingest-check ok"><span class="m">●</span><span>storage temp 2–8°C</span><span class="v">4.2°C</span></div>
+            <div class="ingest-check pending"><span class="m">○</span><span>aliquot · 5 panels</span><span class="v">in queue</span></div>
+          </div>
+
+          <div class="ingest-log">
+            <div class="ingest-log-row"><span class="t">09:14:02</span><span class="msg">sample received · QLB-04821</span></div>
+            <div class="ingest-log-row"><span class="t">09:14:18</span><span class="msg ok">+ barcode scan · ok</span></div>
+            <div class="ingest-log-row"><span class="t">09:15:44</span><span class="msg ok">+ qc panel · 4/4 pass</span></div>
+            <div class="ingest-log-row"><span class="t">09:16:09</span><span class="msg">→ queued for aliquot</span></div>
+          </div>
+        </div>
+      </div>`
+  },
+  {
+    label: 'POST /v1/assay · run panel',
+    code: `<span class="c">// stage 02 · biomarker assay (5-panel)</span>
+<span class="k">await</span> qlab.assay.run({
+  sample_id: <span class="s">"QLB-2026-04821"</span>,
+  panel: [<span class="s">"Aβ40"</span>, <span class="s">"Aβ42"</span>, <span class="s">"cortisol"</span>, <span class="s">"DHEA"</span>, <span class="s">"melatonin"</span>],
+  protocol: <span class="s">"qlb-v3.2"</span>
+});
+
+<span class="c">// streaming results</span>
+{ marker: <span class="s">"Aβ40"</span>,    value: <span class="n">0.62</span>, status: <span class="ok">"ok"</span> }
+{ marker: <span class="s">"Aβ42"</span>,    value: <span class="n">0.48</span>, status: <span class="ok">"ok"</span> }
+{ marker: <span class="s">"cortisol"</span>,  value: <span class="n">0.78</span>, status: <span class="ok">"ok"</span> }
+{ marker: <span class="s">"DHEA"</span>,     value: <span class="n">0.54</span>, status: <span class="ok">"ok"</span> }
+{ marker: <span class="s">"melatonin"</span>, value: <span class="n">0.36</span>, status: <span class="ok">"ok"</span> }`,
+    rightLabel: 'Kinetic readout · live',
+    media: `
+      <div class="stage-media-bar">
+        <span>Stage 02 · Biomarker assay (5-panel)</span>
+        <span class="meta">qlb-v3.2 protocol</span>
+      </div>
+      <div class="stage-media-body">
+        <div class="stage-media-thumb" style="background:#0E0F12; display:flex; align-items:center; justify-content:center; padding:20px;">
+          <svg viewBox="0 0 380 270" width="100%" height="100%" style="max-width:100%;">
+            <defs>
+              <radialGradient id="wellGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#7E9DFF" stop-opacity="1"/>
+                <stop offset="100%" stop-color="#1F8A82" stop-opacity=".4"/>
+              </radialGradient>
+              <radialGradient id="wellGlowWarn" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#FFD580" stop-opacity="1"/>
+                <stop offset="100%" stop-color="#FFB020" stop-opacity=".4"/>
+              </radialGradient>
+            </defs>
+            <!-- plate frame -->
+            <rect x="14" y="14" width="352" height="242" rx="8" fill="#0E0F12" stroke="#3F3F46" stroke-width="1"/>
+            <rect x="14" y="14" width="352" height="24" fill="#18181B" stroke="#3F3F46" stroke-width="1"/>
+            <text x="22" y="30" fill="#A1A1AA" font-family="Geist Mono" font-size="10">96-well · ELISA · QLB-v3.2 protocol</text>
+            <circle cx="350" cy="26" r="3" fill="#22D17C"><animate attributeName="opacity" values="1;.3;1" dur="1.4s" repeatCount="indefinite"/></circle>
+            <text x="343" y="29" fill="#22D17C" font-family="Geist Mono" font-size="8" text-anchor="end">live</text>
+            <!-- column labels -->
+            <g font-family="Geist Mono" font-size="8" fill="#52525B" text-anchor="middle">
+              <text x="56" y="56">1</text><text x="82" y="56">2</text><text x="108" y="56">3</text><text x="134" y="56">4</text>
+              <text x="160" y="56">5</text><text x="186" y="56">6</text><text x="212" y="56">7</text><text x="238" y="56">8</text>
+              <text x="264" y="56">9</text><text x="290" y="56">10</text><text x="316" y="56">11</text><text x="342" y="56">12</text>
+            </g>
+            <!-- row labels -->
+            <g font-family="Geist Mono" font-size="8" fill="#52525B" text-anchor="middle">
+              <text x="32" y="73">A</text><text x="32" y="99">B</text><text x="32" y="125">C</text><text x="32" y="151">D</text>
+              <text x="32" y="177">E</text><text x="32" y="203">F</text><text x="32" y="229">G</text><text x="32" y="255">H</text>
+            </g>
+            <!-- wells -->
+            <g>
+              <circle cx="56" cy="70" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="82" cy="70" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="108" cy="70" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="134" cy="70" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="160" cy="70" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="186" cy="70" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="212" cy="70" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="238" cy="70" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="264" cy="70" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="290" cy="70" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="316" cy="70" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="342" cy="70" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="56" cy="96" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="82" cy="96" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="108" cy="96" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="134" cy="96" r="8" fill="url(#wellGlowWarn)" stroke="#FFB020" stroke-width=".7"><animate attributeName="opacity" values=".6;1;.6" dur="1.8s" repeatCount="indefinite"/></circle>
+              <circle cx="160" cy="96" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="186" cy="96" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="212" cy="96" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="238" cy="96" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="264" cy="96" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="290" cy="96" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="316" cy="96" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="342" cy="96" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="56" cy="122" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="82" cy="122" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="108" cy="122" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="134" cy="122" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="160" cy="122" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="186" cy="122" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="212" cy="122" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="238" cy="122" r="8" fill="url(#wellGlowWarn)" stroke="#FFB020" stroke-width=".7"><animate attributeName="opacity" values=".6;1;.6" dur="1.8s" repeatCount="indefinite"/></circle>
+              <circle cx="264" cy="122" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="290" cy="122" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="316" cy="122" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="342" cy="122" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="56" cy="148" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="82" cy="148" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="108" cy="148" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="134" cy="148" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="160" cy="148" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="186" cy="148" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="212" cy="148" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="238" cy="148" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="264" cy="148" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="290" cy="148" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="316" cy="148" r="8" fill="url(#wellGlowWarn)" stroke="#FFB020" stroke-width=".7"><animate attributeName="opacity" values=".6;1;.6" dur="1.8s" repeatCount="indefinite"/></circle>
+              <circle cx="342" cy="148" r="8" fill="#1F8A82" opacity=".75" stroke="#1F8A82" stroke-width=".5"/>
+              <circle cx="56" cy="174" r="8" fill="url(#wellGlow)" stroke="#7E9DFF" stroke-width=".6"><animate attributeName="opacity" values=".4;1;.4" dur="1.6s" begin="0.32s" repeatCount="indefinite"/></circle>
+              <circle cx="82" cy="174" r="8" fill="url(#wellGlow)" stroke="#7E9DFF" stroke-width=".6"><animate attributeName="opacity" values=".4;1;.4" dur="1.6s" begin="0.40s" repeatCount="indefinite"/></circle>
+              <circle cx="108" cy="174" r="8" fill="url(#wellGlow)" stroke="#7E9DFF" stroke-width=".6"><animate attributeName="opacity" values=".4;1;.4" dur="1.6s" begin="0.48s" repeatCount="indefinite"/></circle>
+              <circle cx="134" cy="174" r="8" fill="url(#wellGlow)" stroke="#7E9DFF" stroke-width=".6"><animate attributeName="opacity" values=".4;1;.4" dur="1.6s" begin="0.56s" repeatCount="indefinite"/></circle>
+              <circle cx="160" cy="174" r="8" fill="url(#wellGlow)" stroke="#7E9DFF" stroke-width=".6"><animate attributeName="opacity" values=".4;1;.4" dur="1.6s" begin="0.64s" repeatCount="indefinite"/></circle>
+              <circle cx="186" cy="174" r="8" fill="url(#wellGlow)" stroke="#7E9DFF" stroke-width=".6"><animate attributeName="opacity" values=".4;1;.4" dur="1.6s" begin="0.72s" repeatCount="indefinite"/></circle>
+              <circle cx="212" cy="174" r="8" fill="url(#wellGlow)" stroke="#7E9DFF" stroke-width=".6"><animate attributeName="opacity" values=".4;1;.4" dur="1.6s" begin="0.80s" repeatCount="indefinite"/></circle>
+              <circle cx="238" cy="174" r="8" fill="url(#wellGlow)" stroke="#7E9DFF" stroke-width=".6"><animate attributeName="opacity" values=".4;1;.4" dur="1.6s" begin="0.88s" repeatCount="indefinite"/></circle>
+              <circle cx="264" cy="174" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+              <circle cx="290" cy="174" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+              <circle cx="316" cy="174" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+              <circle cx="342" cy="174" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+              <circle cx="56" cy="200" r="8" fill="url(#wellGlow)" stroke="#7E9DFF" stroke-width=".6"><animate attributeName="opacity" values=".4;1;.4" dur="1.6s" begin="0.40s" repeatCount="indefinite"/></circle>
+              <circle cx="82" cy="200" r="8" fill="url(#wellGlow)" stroke="#7E9DFF" stroke-width=".6"><animate attributeName="opacity" values=".4;1;.4" dur="1.6s" begin="0.48s" repeatCount="indefinite"/></circle>
+              <circle cx="108" cy="200" r="8" fill="url(#wellGlow)" stroke="#7E9DFF" stroke-width=".6"><animate attributeName="opacity" values=".4;1;.4" dur="1.6s" begin="0.56s" repeatCount="indefinite"/></circle>
+              <circle cx="134" cy="200" r="8" fill="url(#wellGlow)" stroke="#7E9DFF" stroke-width=".6"><animate attributeName="opacity" values=".4;1;.4" dur="1.6s" begin="0.64s" repeatCount="indefinite"/></circle>
+              <circle cx="160" cy="200" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+              <circle cx="186" cy="200" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+              <circle cx="212" cy="200" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+              <circle cx="238" cy="200" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+              <circle cx="264" cy="200" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+              <circle cx="290" cy="200" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+              <circle cx="316" cy="200" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+              <circle cx="342" cy="200" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+              <circle cx="56" cy="226" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+              <circle cx="82" cy="226" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+              <circle cx="108" cy="226" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+              <circle cx="134" cy="226" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+              <circle cx="160" cy="226" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+              <circle cx="186" cy="226" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+              <circle cx="212" cy="226" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+              <circle cx="238" cy="226" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+              <circle cx="264" cy="226" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+              <circle cx="290" cy="226" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+              <circle cx="316" cy="226" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+              <circle cx="342" cy="226" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+              <circle cx="56" cy="252" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+              <circle cx="82" cy="252" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+              <circle cx="108" cy="252" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+              <circle cx="134" cy="252" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+              <circle cx="160" cy="252" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+              <circle cx="186" cy="252" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+              <circle cx="212" cy="252" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+              <circle cx="238" cy="252" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+              <circle cx="264" cy="252" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+              <circle cx="290" cy="252" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+              <circle cx="316" cy="252" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+              <circle cx="342" cy="252" r="8" fill="#0E0F12" stroke="#3F3F46" stroke-width=".7"/>
+            </g>
+            <!-- scanning highlight on row F (currently reading) -->
+            <line x1="42" y1="203" x2="354" y2="203" stroke="#1F8A82" stroke-width=".6" opacity=".7" stroke-dasharray="3 3">
+              <animate attributeName="opacity" values=".3;.8;.3" dur="2s" repeatCount="indefinite"/>
+            </line>
+            <!-- legend bottom -->
+            <g transform="translate(22, 254)" font-family="Geist Mono" font-size="8" fill="#71717A">
+              <circle cx="0" cy="-4" r="3.5" fill="#1F8A82" opacity=".75"/>
+              <text x="7" y="-1.5">complete</text>
+              <circle cx="62" cy="-4" r="3.5" fill="url(#wellGlow)"/>
+              <text x="69" y="-1.5">reading</text>
+              <circle cx="118" cy="-4" r="3.5" fill="url(#wellGlowWarn)"/>
+              <text x="125" y="-1.5">flagged</text>
+            </g>
+          </svg>
+          <span class="stage-media-thumb-tag">96-well · ELISA assay · live</span>
+        </div>
+        <div class="stage-data">
+          <h5>5-marker panel 결과</h5>
+          <span class="stage-pill ok">● 28h 14m · CV &lt; 5%</span>
+          <div class="stage-bar"><span class="stage-bar-name">Aβ40</span><div class="stage-bar-track"><div class="stage-bar-fill" style="width:62%"></div></div><span class="stage-bar-val">0.62</span></div>
+          <div class="stage-bar"><span class="stage-bar-name">Aβ42</span><div class="stage-bar-track"><div class="stage-bar-fill" style="width:48%"></div></div><span class="stage-bar-val">0.48</span></div>
+          <div class="stage-bar"><span class="stage-bar-name">Cortisol</span><div class="stage-bar-track"><div class="stage-bar-fill warn" style="width:78%"></div></div><span class="stage-bar-val">0.78</span></div>
+          <div class="stage-bar"><span class="stage-bar-name">DHEA</span><div class="stage-bar-track"><div class="stage-bar-fill" style="width:54%"></div></div><span class="stage-bar-val">0.54</span></div>
+          <div class="stage-bar"><span class="stage-bar-name">Melatonin</span><div class="stage-bar-track"><div class="stage-bar-fill" style="width:36%"></div></div><span class="stage-bar-val">0.36</span></div>
+          <div class="stage-data-row" style="margin-top:4px"><span class="lbl">Aβ42/Aβ40 ratio</span><span class="val warn">0.077 · 이상</span></div>
+          <div class="stage-data-row"><span class="lbl">Outlier marker</span><span class="val warn">Cortisol ↑</span></div>
+        </div>
+      </div>`,
+    viz: `
+      <div class="lp">
+        <!-- ELISA kinetic curve: OD vs incubation time -->
+        <div class="lp-row">
+          <div class="lp-h">Optical density · 450nm</div>
+          <div class="lp-stat"><span class="ok">● live</span> &nbsp;<span style="color:#71717A">well E7 · cortisol</span></div>
+        </div>
+        <div class="lp-kinetic">
+          <svg class="lp-kinetic-svg" viewBox="0 0 380 130" preserveAspectRatio="none">
+            <!-- y-axis labels -->
+            <g class="lp-kinetic-axis">
+              <text x="-26" y="8" text-anchor="start">2.5</text>
+              <text x="-26" y="40" text-anchor="start">2.0</text>
+              <text x="-26" y="72" text-anchor="start">1.5</text>
+              <text x="-26" y="104" text-anchor="start">1.0</text>
+              <text x="-26" y="126" text-anchor="start">0.5</text>
+            </g>
+            <!-- grid -->
+            <g class="lp-kinetic-grid">
+              <line x1="0" y1="32" x2="380" y2="32"/>
+              <line x1="0" y1="64" x2="380" y2="64"/>
+              <line x1="0" y1="96" x2="380" y2="96"/>
+              <line x1="0" y1="128" x2="380" y2="128" stroke="rgba(255,255,255,.12)"/>
+              <line x1="0" y1="0" x2="0" y2="130"/>
+              <line x1="95" y1="0" x2="95" y2="130"/>
+              <line x1="190" y1="0" x2="190" y2="130"/>
+              <line x1="285" y1="0" x2="285" y2="130"/>
+              <line x1="380" y1="0" x2="380" y2="130"/>
+            </g>
+            <!-- standard curve (faint dashed) -->
+            <path class="lp-kinetic-curve std" d="M0,118 Q60,100 110,72 T220,38 T380,18"/>
+            <!-- other wells (muted) -->
+            <path class="lp-kinetic-curve mut" d="M0,120 Q60,108 120,90 T240,68 T380,52"/>
+            <path class="lp-kinetic-curve mut" d="M0,121 Q70,112 130,98 T260,80 T380,68"/>
+            <path class="lp-kinetic-curve mut" d="M0,119 Q50,104 110,82 T230,50 T380,32"/>
+            <!-- active well E7 cortisol -->
+            <path class="lp-kinetic-curve act" d="M0,118 Q40,98 80,76 Q120,56 160,42 Q200,32 240,28"/>
+            <circle class="lp-kinetic-marker" cx="240" cy="28" r="3">
+              <animate attributeName="opacity" values="1;.3;1" dur="1.4s" repeatCount="indefinite"/>
+            </circle>
+            <!-- x labels -->
+            <g class="lp-kinetic-axis">
+              <text x="0" y="144">0</text>
+              <text x="95" y="144">15</text>
+              <text x="190" y="144">30</text>
+              <text x="285" y="144">45</text>
+              <text x="360" y="144">60 min</text>
+            </g>
+          </svg>
+          <div class="lp-kinetic-label">
+            <span class="v">2.18 OD</span>
+            <span class="well">cortisol · t=38m</span>
+          </div>
+        </div>
+
+        <div class="lp-stats">
+          <div><span class="l">Wells active</span><span class="v">87<span style="font-size:9px;color:#71717A">/96</span></span></div>
+          <div><span class="l">CV intra</span><span class="v ok">3.2%</span></div>
+          <div><span class="l">Z-factor</span><span class="v ok">0.84</span></div>
+          <div><span class="l">Throughput</span><span class="v">42<span style="font-size:9px;color:#71717A">/h</span></span></div>
+        </div>
+      </div>`
+  },
+  {
+    label: 'POST /v1/inference · QLB-v3.2',
+    code: `<span class="c">// stage 03 · AI risk classification</span>
+<span class="k">const</span> result = <span class="k">await</span> qlab.inference.classify({
+  sample_id: <span class="s">"QLB-2026-04821"</span>,
+  model: <span class="s">"qlb-v3.2"</span>
+});
+
+<span class="c">// model output</span>
+{
+  <span class="k">"prediction"</span>: <span class="s">"moderate"</span>,
+  <span class="k">"confidence"</span>: <span class="n">0.924</span>,
+  <span class="k">"distribution"</span>: {
+    <span class="k">"low"</span>:      <span class="n">0.12</span>,
+    <span class="k">"moderate"</span>: <span class="n">0.68</span>,
+    <span class="k">"high"</span>:     <span class="n">0.20</span>
+  },
+  <span class="k">"contributing"</span>: [<span class="s">"Aβ42"</span>, <span class="s">"cortisol"</span>]
+}`,
+    rightLabel: 'Inference monitor · v3.2',
+    media: `
+      <div class="stage-media-bar">
+        <span>Stage 03 · AI risk classification</span>
+        <span class="meta">qlb-v3.2 · inference</span>
+      </div>
+      <div class="stage-media-body">
+        <div class="stage-media-thumb" style="background:#0E0F12; display:flex; align-items:center; justify-content:center; padding:16px;">
+          <svg viewBox="0 0 320 220" width="100%" height="100%" style="max-width:280px;">
+            <defs>
+              <radialGradient id="nodeGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#1F8A82" stop-opacity="1"/>
+                <stop offset="100%" stop-color="#1F8A82" stop-opacity=".2"/>
+              </radialGradient>
+              <radialGradient id="nodeWarn" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#FFB020" stop-opacity="1"/>
+                <stop offset="100%" stop-color="#FFB020" stop-opacity=".2"/>
+              </radialGradient>
+            </defs>
+            <!-- frame header -->
+            <rect x="14" y="14" width="292" height="20" fill="#18181B" stroke="#3F3F46" stroke-width="1"/>
+            <rect x="14" y="14" width="292" height="192" rx="6" fill="none" stroke="#3F3F46" stroke-width="1"/>
+            <text x="22" y="28" fill="#71717A" font-family="Geist Mono" font-size="9">qlb-v3.2 · neural inference</text>
+
+            <!-- column labels -->
+            <g font-family="Geist Mono" font-size="7" fill="#52525B" text-anchor="middle">
+              <text x="60" y="50">INPUT</text>
+              <text x="160" y="50">HIDDEN</text>
+              <text x="260" y="50">OUTPUT</text>
+            </g>
+
+            <!-- input nodes (5 markers) -->
+            <g font-family="Geist Mono" font-size="7.5" fill="#A1A1AA">
+              <circle cx="60" cy="70" r="5" fill="#27272A" stroke="#52525B" stroke-width=".8"/>
+              <text x="50" y="72" text-anchor="end">Aβ40</text>
+              <circle cx="60" cy="100" r="5" fill="#FFB020" stroke="#FFB020" stroke-width=".8" opacity=".9"/>
+              <text x="50" y="102" text-anchor="end" fill="#FFB020">Aβ42</text>
+              <circle cx="60" cy="130" r="5" fill="#FFB020" stroke="#FFB020" stroke-width=".8" opacity=".9"/>
+              <text x="50" y="132" text-anchor="end" fill="#FFB020">cortisol</text>
+              <circle cx="60" cy="160" r="5" fill="#27272A" stroke="#52525B" stroke-width=".8"/>
+              <text x="50" y="162" text-anchor="end">DHEA</text>
+              <circle cx="60" cy="190" r="5" fill="#27272A" stroke="#52525B" stroke-width=".8"/>
+              <text x="50" y="192" text-anchor="end">melatonin</text>
+            </g>
+
+            <!-- hidden layer (6 nodes) -->
+            <g>
+              <circle cx="160" cy="65" r="4.5" fill="#27272A" stroke="#52525B" stroke-width=".7"/>
+              <circle cx="160" cy="92" r="4.5" fill="#27272A" stroke="#52525B" stroke-width=".7"/>
+              <circle cx="160" cy="119" r="4.5" fill="#27272A" stroke="#52525B" stroke-width=".7"/>
+              <circle cx="160" cy="146" r="4.5" fill="#27272A" stroke="#52525B" stroke-width=".7"/>
+              <circle cx="160" cy="173" r="4.5" fill="#27272A" stroke="#52525B" stroke-width=".7"/>
+              <circle cx="160" cy="200" r="4.5" fill="#27272A" stroke="#52525B" stroke-width=".7"/>
+            </g>
+
+            <!-- output nodes (3 classes) -->
+            <g font-family="Geist Mono" font-size="7.5">
+              <circle cx="260" cy="85" r="6" fill="#27272A" stroke="#52525B" stroke-width=".8"/>
+              <text x="270" y="87" fill="#71717A">low · 12%</text>
+              <circle cx="260" cy="130" r="8" fill="url(#nodeWarn)" stroke="#FFB020" stroke-width="1"/>
+              <text x="272" y="132" fill="#FFB020">moderate · 68%</text>
+              <circle cx="260" cy="175" r="6" fill="#27272A" stroke="#52525B" stroke-width=".8"/>
+              <text x="270" y="177" fill="#71717A">high · 20%</text>
+            </g>
+
+            <!-- edges: input → hidden (mostly faint, contributors highlighted) -->
+            <g stroke-width=".4" fill="none" opacity=".4">
+              <line x1="65" y1="70" x2="155" y2="65" stroke="#3F3F46"/>
+              <line x1="65" y1="70" x2="155" y2="92" stroke="#3F3F46"/>
+              <line x1="65" y1="70" x2="155" y2="119" stroke="#3F3F46"/>
+              <line x1="65" y1="70" x2="155" y2="146" stroke="#3F3F46"/>
+              <line x1="65" y1="70" x2="155" y2="173" stroke="#3F3F46"/>
+              <line x1="65" y1="70" x2="155" y2="200" stroke="#3F3F46"/>
+
+              <line x1="65" y1="160" x2="155" y2="65" stroke="#3F3F46"/>
+              <line x1="65" y1="160" x2="155" y2="92" stroke="#3F3F46"/>
+              <line x1="65" y1="160" x2="155" y2="119" stroke="#3F3F46"/>
+              <line x1="65" y1="160" x2="155" y2="146" stroke="#3F3F46"/>
+              <line x1="65" y1="160" x2="155" y2="173" stroke="#3F3F46"/>
+              <line x1="65" y1="160" x2="155" y2="200" stroke="#3F3F46"/>
+
+              <line x1="65" y1="190" x2="155" y2="65" stroke="#3F3F46"/>
+              <line x1="65" y1="190" x2="155" y2="92" stroke="#3F3F46"/>
+              <line x1="65" y1="190" x2="155" y2="119" stroke="#3F3F46"/>
+              <line x1="65" y1="190" x2="155" y2="146" stroke="#3F3F46"/>
+              <line x1="65" y1="190" x2="155" y2="173" stroke="#3F3F46"/>
+              <line x1="65" y1="190" x2="155" y2="200" stroke="#3F3F46"/>
+            </g>
+
+            <!-- highlighted edges from contributing markers (Aβ42, cortisol) -->
+            <g stroke="#FFB020" stroke-width=".6" fill="none" opacity=".75">
+              <line x1="65" y1="100" x2="155" y2="65"/>
+              <line x1="65" y1="100" x2="155" y2="92"/>
+              <line x1="65" y1="100" x2="155" y2="119"/>
+              <line x1="65" y1="100" x2="155" y2="146"/>
+              <line x1="65" y1="100" x2="155" y2="173"/>
+              <line x1="65" y1="100" x2="155" y2="200"/>
+
+              <line x1="65" y1="130" x2="155" y2="65"/>
+              <line x1="65" y1="130" x2="155" y2="92"/>
+              <line x1="65" y1="130" x2="155" y2="119"/>
+              <line x1="65" y1="130" x2="155" y2="146"/>
+              <line x1="65" y1="130" x2="155" y2="173"/>
+              <line x1="65" y1="130" x2="155" y2="200"/>
+            </g>
+
+            <!-- edges: hidden → output (highlight to moderate) -->
+            <g stroke-width=".4" fill="none" opacity=".35">
+              <line x1="165" y1="65" x2="254" y2="85" stroke="#3F3F46"/>
+              <line x1="165" y1="92" x2="254" y2="85" stroke="#3F3F46"/>
+              <line x1="165" y1="119" x2="254" y2="85" stroke="#3F3F46"/>
+              <line x1="165" y1="146" x2="254" y2="85" stroke="#3F3F46"/>
+              <line x1="165" y1="173" x2="254" y2="85" stroke="#3F3F46"/>
+              <line x1="165" y1="200" x2="254" y2="85" stroke="#3F3F46"/>
+
+              <line x1="165" y1="65" x2="254" y2="175" stroke="#3F3F46"/>
+              <line x1="165" y1="92" x2="254" y2="175" stroke="#3F3F46"/>
+              <line x1="165" y1="119" x2="254" y2="175" stroke="#3F3F46"/>
+              <line x1="165" y1="146" x2="254" y2="175" stroke="#3F3F46"/>
+              <line x1="165" y1="173" x2="254" y2="175" stroke="#3F3F46"/>
+              <line x1="165" y1="200" x2="254" y2="175" stroke="#3F3F46"/>
+            </g>
+            <g stroke="#FFB020" stroke-width=".6" fill="none" opacity=".7">
+              <line x1="165" y1="65" x2="252" y2="130"/>
+              <line x1="165" y1="92" x2="252" y2="130"/>
+              <line x1="165" y1="119" x2="252" y2="130"/>
+              <line x1="165" y1="146" x2="252" y2="130"/>
+              <line x1="165" y1="173" x2="252" y2="130"/>
+              <line x1="165" y1="200" x2="252" y2="130"/>
+            </g>
+
+            <!-- pulse on output -->
+            <circle cx="260" cy="130" r="12" fill="none" stroke="#FFB020" stroke-width="1" opacity=".6">
+              <animate attributeName="r" values="8;16;8" dur="2s" repeatCount="indefinite"/>
+              <animate attributeName="opacity" values=".6;0;.6" dur="2s" repeatCount="indefinite"/>
+            </circle>
+          </svg>
+          <span class="stage-media-thumb-tag">qlb-v3.2 · 5 → 6 → 3 classifier</span>
+        </div>
+        <div class="stage-data">
+          <h5>위험도 분류 결과</h5>
+          <span class="stage-pill warn">● MODERATE · 주의 구간</span>
+          <div class="stage-stat">
+            <span class="num">68.0</span><span class="unit">% probability</span>
+            <span class="delta warn">vs base 12% ↑</span>
+          </div>
+          <div class="stage-bar"><span class="stage-bar-name">Low</span><div class="stage-bar-track"><div class="stage-bar-fill" style="width:12%; background:#52525B;"></div></div><span class="stage-bar-val">12%</span></div>
+          <div class="stage-bar"><span class="stage-bar-name">Moderate</span><div class="stage-bar-track"><div class="stage-bar-fill warn" style="width:68%"></div></div><span class="stage-bar-val">68%</span></div>
+          <div class="stage-bar"><span class="stage-bar-name">High</span><div class="stage-bar-track"><div class="stage-bar-fill" style="width:20%; background:#52525B;"></div></div><span class="stage-bar-val">20%</span></div>
+          <div class="stage-data-row" style="margin-top:4px"><span class="lbl">Confidence</span><span class="val">92.4%</span></div>
+          <div class="stage-data-row"><span class="lbl">Top contributors</span><span class="val">Aβ42, cortisol</span></div>
+          <div class="stage-data-row"><span class="lbl">Inference time</span><span class="val">142 ms</span></div>
+        </div>
+      </div>`,
+    viz: `
+      <div class="lp">
+        <div class="lp-conf">
+          <div class="lp-conf-h">
+            <span class="lp-conf-l">Risk · moderate</span>
+            <span class="lp-stat"><span class="warn">●</span> conf 92.4%</span>
+          </div>
+          <div class="lp-conf-v">68<span class="pct" style="color:#FFB020">%</span></div>
+          <div class="lp-conf-bar">
+            <span class="low" style="width:12%"></span>
+            <span class="mod" style="width:68%"></span>
+            <span class="high" style="width:20%"></span>
+          </div>
+          <div class="lp-conf-leg">
+            <span>low 12%</span><span>moderate 68%</span><span>high 20%</span>
+          </div>
+        </div>
+
+        <div class="lp-shap">
+          <div class="lp-shap-h">
+            <span>SHAP contribution</span>
+            <span>← protective · risk →</span>
+          </div>
+          <div class="lp-shap-row">
+            <span class="name hot">cortisol</span>
+            <div class="lp-shap-bar"><div class="pos" style="width:36%"></div></div>
+            <span class="v pos">+0.36</span>
+          </div>
+          <div class="lp-shap-row">
+            <span class="name hot">Aβ42</span>
+            <div class="lp-shap-bar"><div class="pos" style="width:28%"></div></div>
+            <span class="v pos">+0.28</span>
+          </div>
+          <div class="lp-shap-row">
+            <span class="name">Aβ40</span>
+            <div class="lp-shap-bar"><div class="pos" style="width:8%"></div></div>
+            <span class="v pos">+0.08</span>
+          </div>
+          <div class="lp-shap-row">
+            <span class="name">DHEA</span>
+            <div class="lp-shap-bar"><div class="neg" style="width:9%"></div></div>
+            <span class="v neg">−0.09</span>
+          </div>
+          <div class="lp-shap-row">
+            <span class="name">melatonin</span>
+            <div class="lp-shap-bar"><div class="neg" style="width:14%"></div></div>
+            <span class="v neg">−0.14</span>
+          </div>
+        </div>
+
+        <div class="lp-divider"></div>
+
+        <div class="lp-latency">
+          <div>
+            <div class="lp-h" style="margin-bottom:4px">Inference latency · last 24</div>
+            <div class="lp-latency-bars">
+              <span style="height:38%"></span><span style="height:46%"></span><span style="height:32%"></span><span style="height:54%"></span>
+              <span style="height:42%"></span><span style="height:50%"></span><span style="height:36%"></span><span style="height:60%"></span>
+              <span style="height:44%"></span><span style="height:38%"></span><span style="height:48%"></span><span style="height:42%"></span>
+              <span style="height:54%"></span><span style="height:46%"></span><span style="height:40%"></span><span style="height:50%"></span>
+              <span style="height:36%"></span><span style="height:44%"></span><span style="height:42%"></span><span style="height:48%"></span>
+              <span style="height:38%"></span><span style="height:46%"></span><span style="height:54%"></span><span class="now" style="height:62%"></span>
+            </div>
+          </div>
+          <div class="lp-latency-meta">
+            <span>p50 · <span class="v">128 ms</span></span>
+            <span>p95 · <span class="v">186 ms</span></span>
+            <span style="color:#22D17C">● this run · 142 ms</span>
+          </div>
+        </div>
+      </div>`
+  },
+  {
+    label: 'POST /v1/reports · dispatch',
+    code: `<span class="c">// stage 04 · report generation + dispatch</span>
+<span class="k">await</span> qlab.reports.generate({
+  sample_id: <span class="s">"QLB-2026-04821"</span>,
+  format: <span class="s">"pdf"</span>,
+  channel: [<span class="s">"email"</span>, <span class="s">"emr"</span>]
+});
+
+<span class="c">// timeline</span>
+[
+  { stage: <span class="s">"ingest"</span>,    at: <span class="s">"D+0 09:14"</span>, ok: <span class="ok">true</span> },
+  { stage: <span class="s">"assay"</span>,     at: <span class="s">"D+1 16:02"</span>, ok: <span class="ok">true</span> },
+  { stage: <span class="s">"inference"</span>, at: <span class="s">"D+2 09:48"</span>, ok: <span class="ok">true</span> },
+  { stage: <span class="s">"dispatch"</span>,  at: <span class="s">"D+2 11:20"</span>, ok: <span class="ok">true</span> }
+]`,
+    rightLabel: 'Dispatch channels · live',
+    media: `
+      <div class="stage-media-bar">
+        <span>Stage 04 · Report dispatch</span>
+        <span class="meta">PDF · EMR · email</span>
+      </div>
+      <div class="report-stack">
+        <!-- PAGE 1: Cover / Summary -->
+        <div class="report-page">
+          <div class="rp-h">
+            <div class="rp-brand">QLAB <span>BIO</span></div>
+            <div class="rp-pagenum">01 / 03</div>
+          </div>
+          <div class="rp-section-tag">SUMMARY</div>
+          <div class="rp-h2">인지장애<br/>위험도 보고서</div>
+          <div class="rp-meta">
+            <div class="rp-meta-row"><span class="lbl">Sample</span><span>QLB-2026-04821</span></div>
+            <div class="rp-meta-row"><span class="lbl">Issued</span><span>2026-04-23</span></div>
+            <div class="rp-meta-row"><span class="lbl">Ref</span><span>Dr. Kim, Neurology</span></div>
+            <div class="rp-meta-row"><span class="lbl">Protocol</span><span>QLB-v3.2</span></div>
+          </div>
+          <div class="rp-summary-box">
+            <span class="rp-summary-lbl">Risk classification</span>
+            <span class="rp-summary-val">Moderate · 68%</span>
+            <span class="rp-summary-sub">confidence 92.4%</span>
+          </div>
+          <div class="rp-foot">
+            <span>cover</span><span>confidential</span>
+          </div>
+        </div>
+
+        <!-- PAGE 2: Marker breakdown -->
+        <div class="report-page">
+          <div class="rp-h">
+            <div class="rp-brand">QLAB <span>BIO</span></div>
+            <div class="rp-pagenum">02 / 03</div>
+          </div>
+          <div class="rp-section-tag">5-MARKER PANEL</div>
+          <div class="rp-h2" style="font-size:11px; line-height:1.3">바이오마커 측정 결과</div>
+          <div style="display:flex; flex-direction:column; gap:5px;">
+            <div class="rp-bar-row"><span>Aβ40</span><div class="rp-bar-track"><div class="rp-bar-fill" style="width:62%"></div></div><span class="rp-bar-val">0.62</span></div>
+            <div class="rp-bar-row"><span>Aβ42</span><div class="rp-bar-track"><div class="rp-bar-fill" style="width:48%"></div></div><span class="rp-bar-val">0.48</span></div>
+            <div class="rp-bar-row"><span>Cortisol</span><div class="rp-bar-track"><div class="rp-bar-fill warn" style="width:78%"></div></div><span class="rp-bar-val">0.78</span></div>
+            <div class="rp-bar-row"><span>DHEA</span><div class="rp-bar-track"><div class="rp-bar-fill" style="width:54%"></div></div><span class="rp-bar-val">0.54</span></div>
+            <div class="rp-bar-row"><span>Melatonin</span><div class="rp-bar-track"><div class="rp-bar-fill" style="width:36%"></div></div><span class="rp-bar-val">0.36</span></div>
+          </div>
+          <div style="margin-top:6px; padding:6px 8px; background:#F4F4F5; border-left:2px solid #FFB020;">
+            <div style="font-family:'Geist Mono',monospace; font-size:7px; color:#92651A; letter-spacing:.06em; text-transform:uppercase;">Outlier</div>
+            <div style="font-size:9px; color:#27272A; margin-top:2px;">Cortisol 상승 — 만성 스트레스 또는 코르티솔 조절 이상 가능성</div>
+          </div>
+          <div class="rp-mini-chart">
+            <span style="height:62%"></span><span style="height:48%"></span><span style="height:78%; background:#FFB020"></span><span style="height:54%"></span><span style="height:36%"></span>
+            <span style="height:55%; opacity:.4"></span><span style="height:60%; opacity:.4"></span><span style="height:50%; opacity:.4"></span>
+          </div>
+          <div class="rp-foot">
+            <span>marker panel</span><span>QLB-v3.2</span>
+          </div>
+        </div>
+
+        <!-- PAGE 3: AI analysis + recommendation -->
+        <div class="report-page">
+          <div class="rp-h">
+            <div class="rp-brand">QLAB <span>BIO</span></div>
+            <div class="rp-pagenum">03 / 03</div>
+          </div>
+          <div class="rp-section-tag">AI ANALYSIS</div>
+          <div class="rp-h2" style="font-size:11px; line-height:1.3">분석 및 권고사항</div>
+          <div style="display:flex; flex-direction:column; gap:4px;">
+            <div class="rp-bar-row"><span>Low</span><div class="rp-bar-track"><div class="rp-bar-fill" style="width:12%; background:#A1A1AA"></div></div><span class="rp-bar-val">12%</span></div>
+            <div class="rp-bar-row"><span>Moderate</span><div class="rp-bar-track"><div class="rp-bar-fill warn" style="width:68%"></div></div><span class="rp-bar-val">68%</span></div>
+            <div class="rp-bar-row"><span>High</span><div class="rp-bar-track"><div class="rp-bar-fill" style="width:20%; background:#A1A1AA"></div></div><span class="rp-bar-val">20%</span></div>
+          </div>
+          <div style="font-family:'Geist Mono',monospace; font-size:7.5px; color:#71717A; letter-spacing:.06em; text-transform:uppercase; margin-top:4px;">Top contributors</div>
+          <div style="display:flex; gap:4px;">
+            <span style="font-family:'Geist Mono',monospace; font-size:8px; padding:2px 6px; background:#FFF7E6; color:#92651A; border:1px solid #FFE0A3;">Aβ42</span>
+            <span style="font-family:'Geist Mono',monospace; font-size:8px; padding:2px 6px; background:#FFF7E6; color:#92651A; border:1px solid #FFE0A3;">cortisol</span>
+          </div>
+          <div style="font-family:'Geist Mono',monospace; font-size:7.5px; color:#71717A; letter-spacing:.06em; text-transform:uppercase; margin-top:4px;">Recommendations</div>
+          <div class="rp-bullet">3개월 내 신경과 외래 follow-up 권장</div>
+          <div class="rp-bullet">MMSE / MoCA 인지기능 평가 고려</div>
+          <div class="rp-bullet">생활습관 개선 (수면 · 스트레스 관리)</div>
+          <div class="rp-foot">
+            <span>QLAB BIO · qlabbio.com</span><span>final</span>
+          </div>
+        </div>
+      </div>`,
+    viz: `
+      <div class="lp">
+        <div class="lp-row">
+          <div class="lp-h">Today · 2026-04-23</div>
+          <div class="lp-stat"><span class="ok">●</span> all channels healthy</div>
+        </div>
+
+        <div class="lp-counter">
+          <div><span class="l">Sent today</span><span class="v blue">142</span></div>
+          <div><span class="l">In transit</span><span class="v">3</span></div>
+          <div><span class="l">Avg dispatch</span><span class="v">D+2</span></div>
+          <div><span class="l">Delivery</span><span class="v ok">99.8%</span></div>
+        </div>
+
+        <div class="lp-dispatch">
+          <div class="lp-channel">
+            <span class="lp-channel-icon">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4">
+                <rect x="1" y="3" width="12" height="8" rx="1"/>
+                <path d="M1 4 L7 8 L13 4"/>
+              </svg>
+            </span>
+            <div class="lp-channel-body">
+              <div class="lp-channel-name">Email · PDF</div>
+              <div class="lp-channel-detail">dr.kim@neurology.snuh.org</div>
+            </div>
+            <span class="lp-channel-st ok">delivered</span>
+          </div>
+
+          <div class="lp-channel">
+            <span class="lp-channel-icon">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4">
+                <rect x="2" y="1" width="10" height="12" rx="1"/>
+                <line x1="4" y1="4" x2="10" y2="4"/>
+                <line x1="4" y1="7" x2="10" y2="7"/>
+                <line x1="4" y1="10" x2="8" y2="10"/>
+              </svg>
+            </span>
+            <div class="lp-channel-body">
+              <div class="lp-channel-name">EMR / HL7 FHIR</div>
+              <div class="lp-channel-detail">SNUH · DiagnosticReport</div>
+            </div>
+            <span class="lp-channel-st live">posting</span>
+          </div>
+
+          <div class="lp-channel">
+            <span class="lp-channel-icon">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4">
+                <path d="M7 1 V9 M3 6 L7 10 L11 6 M2 12 H12"/>
+              </svg>
+            </span>
+            <div class="lp-channel-body">
+              <div class="lp-channel-name">Patient portal</div>
+              <div class="lp-channel-detail">qlab.app/r/04821 · 2FA</div>
+            </div>
+            <span class="lp-channel-st queued">queued</span>
+          </div>
+        </div>
+
+        <div class="lp-divider"></div>
+
+        <div class="lp-row">
+          <div class="lp-h">Recent dispatch · last 5</div>
+          <div class="lp-stat" style="font-size:9px;color:#71717A">5/5 ok</div>
+        </div>
+        <div class="timeline" style="gap:6px">
+          <div class="timeline-item done"><span class="dot"></span><span>QLB-04821 · dispatch</span><span class="t">11:20</span></div>
+          <div class="timeline-item done"><span class="dot"></span><span>QLB-04820 · dispatch</span><span class="t">10:48</span></div>
+          <div class="timeline-item done"><span class="dot"></span><span>QLB-04819 · dispatch</span><span class="t">10:12</span></div>
+          <div class="timeline-item done"><span class="dot"></span><span>QLB-04818 · dispatch</span><span class="t">09:51</span></div>
+          <div class="timeline-item done"><span class="dot"></span><span>QLB-04817 · dispatch</span><span class="t">09:34</span></div>
+        </div>
+      </div>`
+  }
+];
+
+const setStage = (i) => {
+  if (!HAS_PIPELINE) return;
+  pSteps.forEach((s, idx) => s.classList.toggle('active', idx === i));
+  const d = pipelineData[i];
+  pdLabel.textContent = d.label;
+  pdCode.innerHTML = d.media;
+  pdRight.textContent = d.rightLabel;
+  pdViz.innerHTML = d.viz;
+  // re-trigger bars
+  if (i === 1 || i === 2) {
+    pdViz.querySelectorAll('.bar-row-fill').forEach(el => {
+      const w = el.style.width;
+      el.style.width = '0';
+      requestAnimationFrame(() => requestAnimationFrame(() => el.style.width = w));
+    });
+  }
+};
+if (HAS_PIPELINE) {
+  setStage(0);
+  let pIdx = 0;
+  let lastInteract = Date.now();
+  pSteps.forEach((s, i) => {
+    s.addEventListener('mouseenter', () => { pIdx = i; setStage(i); lastInteract = Date.now(); });
+    s.addEventListener('click', () => { pIdx = i; setStage(i); lastInteract = Date.now(); });
+  });
+  setInterval(() => {
+    if (Date.now() - lastInteract < 6000) return;
+    pIdx = (pIdx + 1) % pSteps.length;
+    setStage(pIdx);
+  }, 4500);
+}
+
+// hero number ticker
+const tickerEls = document.querySelectorAll('[data-tick]');
+
+// ─────── KR/EN language toggle ───────
+(function () {
+  const STORAGE_KEY = 'qlab.lang';
+  const validLang = (l) => (l === 'en' ? 'en' : 'kr');
+  let lang = validLang(localStorage.getItem(STORAGE_KEY) || 'kr');
+
+  const applyLang = (l) => {
+    lang = validLang(l);
+    document.documentElement.setAttribute('lang', lang === 'en' ? 'en' : 'ko');
+    document.querySelectorAll('[data-i18n]').forEach((el) => {
+      const txt = el.getAttribute('data-' + lang);
+      const html = el.getAttribute('data-' + lang + '-html');
+      if (html != null) el.innerHTML = html;
+      else if (txt != null) el.textContent = txt;
+    });
+    // toggle button label
+    document.querySelectorAll('#langToggle [data-lang-current]').forEach((s) => {
+      s.textContent = lang === 'en' ? 'EN' : 'KR';
+      s.style.color = 'var(--ink)';
+      s.style.fontWeight = '500';
+    });
+    document.querySelectorAll('#langToggle [data-lang-other]').forEach((s) => {
+      s.textContent = lang === 'en' ? 'KR' : 'EN';
+    });
+    localStorage.setItem(STORAGE_KEY, lang);
+  };
+
+  applyLang(lang);
+
+  const btn = document.getElementById('langToggle');
+  if (btn) btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    applyLang(lang === 'en' ? 'kr' : 'en');
+  });
+})();
+</script>
+
+
+</body>
+</html>

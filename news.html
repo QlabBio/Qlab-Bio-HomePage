@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>뉴스룸 — 큐랩바이오</title>
+<link rel="stylesheet" href="common.css"/>
+<style>
+.filter-row { display:flex; gap:8px; margin-bottom:32px; flex-wrap:wrap; }
+.fchip {
+  padding: 7px 16px; border-radius: 100px;
+  background: white; border:1.5px solid var(--slate-200);
+  font-size: 13px; font-weight:600; color: var(--slate-500);
+  cursor:pointer; transition: all .15s;
+  font-family:'Pretendard', sans-serif;
+}
+.fchip:hover { border-color: var(--brand-mid); color: var(--brand); }
+.fchip.active { background: var(--brand); border-color: var(--brand); color:white; }
+
+/* Featured */
+.featured {
+  display:grid; grid-template-columns: 1.3fr 1fr; gap:32px;
+  background: white; border:1px solid var(--slate-100); border-radius: 22px;
+  overflow: hidden; box-shadow: var(--shadow-sm); margin-bottom: 48px;
+}
+.featured-thumb {
+  background: var(--slate-100);
+  position:relative; min-height: 320px;
+  overflow:hidden;
+}
+.featured-thumb img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.featured-thumb::after {
+  content:''; position:absolute; inset:0;
+  background: linear-gradient(135deg, rgba(15,98,181,.18) 0%, rgba(15,98,181,.02) 60%);
+}
+.featured-tag-pos {
+  position:absolute; top:24px; left:24px;
+  background: white; color: var(--brand);
+  font-size:11px; font-weight:700; letter-spacing:.06em;
+  padding:5px 12px; border-radius:100px; text-transform:uppercase;
+  font-family:'Inter', sans-serif;
+}
+.featured-body { padding: 40px; display:flex; flex-direction:column; justify-content:center; }
+.featured-date { font-size:12px; color:var(--slate-400); margin-bottom:10px; font-family:'Inter', sans-serif; letter-spacing:.04em; }
+.featured-title { font-size:26px; font-weight:800; color:var(--slate-900); line-height:1.3; letter-spacing:-.025em; margin-bottom: 14px; }
+.featured-desc { font-size:14px; color:var(--slate-500); line-height:1.75; margin-bottom: 22px; }
+
+/* News list */
+.news-list { display:grid; grid-template-columns: repeat(3,1fr); gap:24px; }
+.news-card {
+  background:white; border:1px solid var(--slate-100); border-radius: 18px;
+  overflow:hidden; box-shadow: var(--shadow-xs);
+  text-decoration:none; color:inherit; display:flex; flex-direction:column;
+  transition: transform .2s, box-shadow .2s;
+}
+.news-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+.news-thumb { height:160px; position:relative; overflow:hidden; }
+.nt-a { background: linear-gradient(135deg, #E8F0FA 0%, #C7DCFA 100%); }
+.nt-b { background: linear-gradient(135deg, #DFEAF7 0%, #B5D0F2 100%); }
+.nt-c { background: linear-gradient(135deg, #F0F6FF 0%, #C7DCFA 100%); }
+.nt-d { background: linear-gradient(135deg, #E8F0FA 0%, #B5D0F2 100%); }
+.nt-e { background: linear-gradient(135deg, #F4F8FD 0%, #DBEAFE 100%); }
+.nt-f { background: linear-gradient(135deg, #DFEAF7 0%, #C7DCFA 100%); }
+.nt-deco { position:absolute; inset:0; pointer-events:none; }
+.news-thumb img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
+.news-thumb::after { content:''; position:absolute; inset:0; background: linear-gradient(135deg, rgba(15,98,181,.10) 0%, rgba(15,98,181,0) 70%); }
+.featured-tag-pos { z-index:2; }
+.nc-body { padding: 22px; flex:1; display:flex; flex-direction:column; }
+.nc-tag {
+  display:inline-block; align-self:flex-start;
+  background: var(--brand-light); color: var(--brand);
+  font-size:10px; font-weight:700; letter-spacing:.06em;
+  padding:3px 9px; border-radius:5px; text-transform:uppercase;
+  margin-bottom:10px; font-family:'Inter', sans-serif;
+}
+.nc-title { font-size:15px; font-weight:700; color:var(--slate-900); line-height:1.5; margin-bottom: 10px; flex:1; }
+.nc-date { font-size:12px; color:var(--slate-400); font-family:'Inter', sans-serif; letter-spacing:.04em; }
+
+/* Pagination */
+.pager { display:flex; justify-content:center; gap:6px; margin-top:48px; }
+.pg {
+  width:36px; height:36px; border-radius:8px;
+  border:1.5px solid var(--slate-200); background:white;
+  font-size:13px; font-weight:600; color:var(--slate-500);
+  cursor:pointer; transition: all .15s;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Inter', sans-serif;
+}
+.pg:hover { border-color: var(--brand-mid); color: var(--brand); }
+.pg.active { background: var(--brand); border-color: var(--brand); color:white; }
+
+@media (max-width:900px){
+  .featured { grid-template-columns: 1fr; }
+  .featured-thumb { min-height: 200px; }
+  .news-list { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav class="qnav" id="nav">
+  <a href="index.html" class="qnav-logo">
+    <div class="qnav-mark">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="5.5" r="2.8" stroke="white" stroke-width="1.4"/>
+        <path d="M3.5 14c0-2.5 2-4.5 4.5-4.5s4.5 2 4.5 4.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+    </div>
+    QLAB BIO
+  </a>
+  <ul class="qnav-links">
+    <li><a href="index.html">홈</a></li>
+    <li><a href="about.html">회사소개</a></li>
+    <li><a href="business.html">사업분야</a></li>
+    <li><a href="news.html" class="active">뉴스룸</a></li>
+    <li><a href="contact.html">고객문의</a></li>
+  </ul>
+  <div class="qnav-right">
+    <button class="lang-btn">KR / EN</button>
+    <a href="contact.html" class="btn btn-primary btn-sm">문의하기</a>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="page-hero-eyebrow">Newsroom</div>
+    <h1 class="page-hero-title">큐랩바이오 소식</h1>
+    <p class="page-hero-sub">큐랩바이오의 최신 보도자료·공지사항·연구 성과를 만나보세요.</p>
+  </div>
+</div>
+<div class="breadcrumb">
+  <div class="container" style="padding:0">
+    <a href="index.html">홈</a> &nbsp;›&nbsp; <span>뉴스룸</span>
+  </div>
+</div>
+
+<div class="bg-gray">
+  <div class="section">
+    <div class="filter-row fi">
+      <button class="fchip active">전체</button>
+      <button class="fchip">보도자료</button>
+      <button class="fchip">공지사항</button>
+      <button class="fchip">연구성과</button>
+      <button class="fchip">파트너십</button>
+    </div>
+
+    <!-- Featured -->
+    <a href="#" class="featured fi d1" style="text-decoration:none;color:inherit">
+      <div class="featured-thumb">
+        <span class="featured-tag-pos">Featured · 보도자료</span>
+        <img src="img/meeting.png" alt="공동 임상 협약"/>
+      </div>
+      <div class="featured-body">
+        <div class="featured-date">2026.03.15</div>
+        <h3 class="featured-title">큐랩바이오, 서울대병원과 알츠하이머 타액 바이오마커 공동임상 연구 협약 체결</h3>
+        <p class="featured-desc">큐랩바이오가 서울대학교병원과 타액 기반 알츠하이머 조기진단 기술의 임상 검증을 위한 공동연구 협약을 체결했습니다. 이번 협약을 통해 향후 2년간 1,000명 규모의 임상 데이터를 확보할 계획입니다.</p>
+        <span style="color:var(--brand);font-weight:700;font-size:14px;display:flex;align-items:center;gap:6px">자세히 보기 →</span>
+      </div>
+    </a>
+
+    <!-- News list -->
+    <div class="news-list">
+      <a href="#" class="news-card fi d1">
+        <div class="news-thumb"><img src="img/building.png" alt="MOU 체결"/></div>
+        <div class="nc-body">
+          <span class="nc-tag">보도자료</span>
+          <div class="nc-title">삼성생명과 인지장애 예측 서비스 도입 MOU 체결</div>
+          <div class="nc-date">2026.01.22</div>
+        </div>
+      </a>
+      <a href="#" class="news-card fi d2">
+        <div class="news-thumb"><img src="img/dashboard.png" alt="투자유치"/></div>
+        <div class="nc-body">
+          <span class="nc-tag">공지사항</span>
+          <div class="nc-title">시리즈 A 투자유치 완료 — 기술 고도화 및 임상 확장 발표</div>
+          <div class="nc-date">2025.12.08</div>
+        </div>
+      </a>
+      <a href="#" class="news-card fi d3">
+        <div class="news-thumb"><img src="img/dashboard.png" alt="AI 정확도"/></div>
+        <div class="nc-body">
+          <span class="nc-tag">연구성과</span>
+          <div class="nc-title">AI 판별 모델 정확도 92% 달성 — 국내 학술지 게재</div>
+          <div class="nc-date">2025.10.30</div>
+        </div>
+      </a>
+      <a href="#" class="news-card fi d1">
+        <div class="news-thumb"><img src="img/lab.png" alt="공동 임상"/></div>
+        <div class="nc-body">
+          <span class="nc-tag">파트너십</span>
+          <div class="nc-title">연세의대·차움병원과 공동 임상 연구 시작</div>
+          <div class="nc-date">2025.09.12</div>
+        </div>
+      </a>
+      <a href="#" class="news-card fi d2">
+        <div class="news-thumb"><img src="img/building.png" alt="벤처 인증"/></div>
+        <div class="nc-body">
+          <span class="nc-tag">보도자료</span>
+          <div class="nc-title">큐랩바이오, 바이오 벤처 인증 획득 — 기술력 공식 인정</div>
+          <div class="nc-date">2025.07.18</div>
+        </div>
+      </a>
+      <a href="#" class="news-card fi d3">
+        <div class="news-thumb"><img src="img/experiment.png" alt="키트 개발"/></div>
+        <div class="nc-body">
+          <span class="nc-tag">연구성과</span>
+          <div class="nc-title">신경호르몬 3종 동시 분석 키트 개발 완료 — 분석 시간 50% 단축</div>
+          <div class="nc-date">2025.05.04</div>
+        </div>
+      </a>
+    </div>
+
+    <div class="pager fi">
+      <button class="pg">‹</button>
+      <button class="pg active">1</button>
+      <button class="pg">2</button>
+      <button class="pg">3</button>
+      <button class="pg">›</button>
+    </div>
+  </div>
+</div>
+
+<footer class="qfoot">
+  <div class="qfoot-grid">
+    <div>
+      <a href="index.html" class="qfoot-logo">
+        <div class="qnav-mark" style="width:24px;height:24px;border-radius:6px">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="5.5" r="2.8" stroke="white" stroke-width="1.4"/>
+            <path d="M3.5 14c0-2.5 2-4.5 4.5-4.5s4.5 2 4.5 4.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+        </div>
+        QLAB BIO
+      </a>
+      <p class="qfoot-desc">생체지표(바이오마커) 분석 기반 인지장애 조기진단 전문 기업</p>
+      <div class="qfoot-contact">
+        <a href="mailto:dntkswlsdn@qlabbio.com">dntkswlsdn@qlabbio.com</a>
+        <a href="tel:01045453220">010-4545-3220</a>
+      </div>
+    </div>
+    <div>
+      <div class="qfoot-col-title">Company</div>
+      <ul class="qfoot-links">
+        <li><a href="about.html">회사소개</a></li>
+        <li><a href="about.html">인사말</a></li>
+        <li><a href="about.html">연혁</a></li>
+        <li><a href="about.html">파트너십</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="qfoot-col-title">Business</div>
+      <ul class="qfoot-links">
+        <li><a href="business.html">솔루션 개요</a></li>
+        <li><a href="business.html">핵심기술</a></li>
+        <li><a href="business.html">AI 전략</a></li>
+        <li><a href="business.html">R&amp;D</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="qfoot-col-title">Support</div>
+      <ul class="qfoot-links">
+        <li><a href="news.html">뉴스룸</a></li>
+        <li><a href="news.html">보도자료</a></li>
+        <li><a href="contact.html">고객문의</a></li>
+        <li><a href="contact.html">오시는 길</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="qfoot-bottom">
+    <p>© 2026 QLAB BIO (큐랩바이오). All rights reserved.</p>
+    <p>개인정보처리방침 · 이용약관</p>
+  </div>
+</footer>
+
+<script>
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 20);
+});
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.fi').forEach(el => io.observe(el));
+document.querySelectorAll('.fchip').forEach(c => c.addEventListener('click', () => {
+  document.querySelectorAll('.fchip').forEach(x => x.classList.remove('active'));
+  c.classList.add('active');
+}));
+</script>
+</body>
+</html>

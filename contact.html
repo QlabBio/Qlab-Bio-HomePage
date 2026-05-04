@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>고객문의 — 큐랩바이오</title>
+<link rel="stylesheet" href="common.css"/>
+<style>
+.contact-grid { display:grid; grid-template-columns: 1.2fr 1fr; gap:48px; align-items:start; }
+.cform {
+  background:white; border-radius:22px; padding:40px;
+  border:1px solid var(--slate-100); box-shadow: var(--shadow-sm);
+}
+.cform-title { font-size:20px; font-weight:700; color:var(--slate-900); margin-bottom:6px; letter-spacing:-.02em; }
+.cform-sub { font-size:13px; color:var(--slate-500); margin-bottom:28px; }
+.frow { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.fgrp { display:flex; flex-direction:column; gap:6px; margin-bottom:16px; }
+.flbl { font-size:12px; font-weight:700; color:var(--slate-600); letter-spacing:.02em; }
+.flbl span { color:var(--brand); }
+.finput, .fsel, .ftxt {
+  width:100%; padding:11px 14px;
+  border:1.5px solid var(--slate-200); border-radius:9px;
+  font-size:14px; font-family:'Pretendard', sans-serif;
+  color:var(--slate-900); background:white; outline:none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.finput:focus, .fsel:focus, .ftxt:focus { border-color:var(--brand); box-shadow: 0 0 0 3px rgba(79,134,198,.15); }
+.ftxt { resize:vertical; min-height:110px; line-height:1.6; }
+.fcheck { display:flex; align-items:flex-start; gap:8px; font-size:12px; color:var(--slate-500); margin-bottom:18px; line-height:1.55; }
+.fcheck input { margin-top:2px; }
+.fcheck a { color:var(--brand); text-decoration:none; }
+
+.cside { display:flex; flex-direction:column; gap:16px; }
+.cside-img-wrap {
+  border-radius:20px; overflow:hidden;
+  border:1px solid var(--slate-100);
+  box-shadow: var(--shadow-xs);
+  aspect-ratio: 4/3;
+  background:#F8FAFC;
+}
+.cside-img-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
+.info-card-light {
+  background: linear-gradient(135deg, #F4F8FD 0%, #E8F0FA 100%);
+  border: 1px solid rgba(15,98,181,.14);
+  border-radius:20px; padding:28px 32px; color:var(--slate-900);
+}
+.icd-title { font-size:16px; font-weight:700; margin-bottom:4px; color:var(--ink, var(--slate-900)); }
+.icd-sub { font-size:12px; color:var(--slate-500); margin-bottom:18px; }
+.icd-row { display:flex; gap:14px; align-items:flex-start; padding: 12px 0; border-bottom:1px solid rgba(15,98,181,.12); }
+.icd-row:last-child { border-bottom:none; padding-bottom:0; }
+.icd-icon { width:34px; height:34px; border-radius:9px; background:rgba(15,98,181,.10); flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+.icd-l { font-size:10.5px; color:var(--slate-500); margin-bottom:2px; letter-spacing:.06em; text-transform:uppercase; font-family:'Inter',sans-serif; font-weight:600; }
+.icd-v { font-size:14px; color:var(--slate-700); font-weight:500; }
+.icd-v a { color:var(--brand); text-decoration:none; }
+.icd-v a:hover { text-decoration:underline; }
+
+.map-card { background:white; border:1px solid var(--slate-100); border-radius:20px; overflow:hidden; box-shadow: var(--shadow-xs); }
+.map-place {
+  height: 180px; background: linear-gradient(135deg, var(--slate-50), var(--brand-light));
+  display:flex; align-items:center; justify-content:center; flex-direction:column; gap:6px;
+  color:var(--slate-500); font-size:13px;
+  border-bottom:1px solid var(--slate-100);
+}
+.map-body { padding: 18px 24px; }
+.map-addr-l { font-size:11px; color:var(--slate-400); letter-spacing:.04em; text-transform:uppercase; margin-bottom:4px; font-family:'Inter',sans-serif; }
+.map-addr-v { font-size:14px; color:var(--slate-700); font-weight:500; line-height:1.6; }
+
+/* FAQ */
+.faq-wrap { max-width: 880px; margin: 0 auto; }
+.faq-item { background:white; border:1px solid var(--slate-100); border-radius:14px; margin-bottom:10px; overflow:hidden; }
+.faq-q { padding:18px 22px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; gap:16px; }
+.faq-q-text { font-size:14px; font-weight:600; color:var(--slate-900); flex:1; line-height:1.5; }
+.faq-q-icon { width:24px; height:24px; border-radius:50%; background:var(--brand-light); color:var(--brand); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:600; flex-shrink:0; transition: transform .2s; }
+.faq-item.open .faq-q-icon { transform: rotate(45deg); background:var(--brand); color:white; }
+.faq-a { max-height:0; overflow:hidden; transition: max-height .3s ease, padding .3s ease; padding: 0 22px; }
+.faq-item.open .faq-a { max-height:200px; padding: 0 22px 18px; }
+.faq-a p { font-size:13px; color:var(--slate-500); line-height:1.7; }
+
+@media (max-width:900px){
+  .contact-grid { grid-template-columns:1fr; }
+  .frow { grid-template-columns:1fr; }
+  .cform { padding:28px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="qnav" id="nav">
+  <a href="index.html" class="qnav-logo">
+    <div class="qnav-mark">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="5.5" r="2.8" stroke="white" stroke-width="1.4"/>
+        <path d="M3.5 14c0-2.5 2-4.5 4.5-4.5s4.5 2 4.5 4.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+    </div>
+    QLAB BIO
+  </a>
+  <ul class="qnav-links">
+    <li><a href="index.html">홈</a></li>
+    <li><a href="about.html">회사소개</a></li>
+    <li><a href="business.html">사업분야</a></li>
+    <li><a href="news.html">뉴스룸</a></li>
+    <li><a href="contact.html" class="active">고객문의</a></li>
+  </ul>
+  <div class="qnav-right">
+    <button class="lang-btn">KR / EN</button>
+    <a href="contact.html" class="btn btn-primary btn-sm">문의하기</a>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="page-hero-eyebrow">Contact Us</div>
+    <h1 class="page-hero-title">언제든지<br/>편하게 문의하세요</h1>
+    <p class="page-hero-sub">파트너십·투자·병원 협력·기술 문의 — 모든 문의를 환영합니다. 영업일 기준 24시간 이내 답변드립니다.</p>
+  </div>
+</div>
+<div class="breadcrumb">
+  <div class="container" style="padding:0">
+    <a href="index.html">홈</a> &nbsp;›&nbsp; <span>고객문의</span>
+  </div>
+</div>
+
+<div class="bg-gray">
+  <div class="section">
+    <div class="contact-grid">
+      <div class="cform fi">
+        <div class="cform-title">문의 양식</div>
+        <div class="cform-sub">아래 양식을 작성해 주시면 담당자가 빠르게 회신드립니다.</div>
+        <div class="frow">
+          <div class="fgrp">
+            <label class="flbl">성명 <span>*</span></label>
+            <input class="finput" type="text" placeholder="홍길동"/>
+          </div>
+          <div class="fgrp">
+            <label class="flbl">소속기관</label>
+            <input class="finput" type="text" placeholder="기관명 / 회사명"/>
+          </div>
+        </div>
+        <div class="frow">
+          <div class="fgrp">
+            <label class="flbl">이메일 <span>*</span></label>
+            <input class="finput" type="email" placeholder="email@example.com"/>
+          </div>
+          <div class="fgrp">
+            <label class="flbl">전화번호</label>
+            <input class="finput" type="tel" placeholder="010-0000-0000"/>
+          </div>
+        </div>
+        <div class="fgrp">
+          <label class="flbl">문의 유형 <span>*</span></label>
+          <select class="fsel">
+            <option value="">유형을 선택해주세요</option>
+            <option>파트너십</option>
+            <option>투자 / IR</option>
+            <option>병원·검진센터 협력</option>
+            <option>보험사 / 케어 협력</option>
+            <option>기술 문의</option>
+            <option>채용 문의</option>
+            <option>기타</option>
+          </select>
+        </div>
+        <div class="fgrp">
+          <label class="flbl">문의 내용 <span>*</span></label>
+          <textarea class="ftxt" placeholder="문의하실 내용을 자유롭게 작성해 주세요."></textarea>
+        </div>
+        <label class="fcheck">
+          <input type="checkbox"/>
+          <span>(필수) 개인정보 수집·이용에 동의합니다. 수집된 정보는 문의 응대 목적으로만 사용되며, 처리 후 즉시 파기됩니다. <a href="#">자세히 보기</a></span>
+        </label>
+        <button class="btn btn-primary btn-md" style="width:100%;justify-content:center;padding:14px">문의 보내기 →</button>
+      </div>
+
+      <div class="cside fi d1">
+        <div class="cside-img-wrap" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#E6F3F1 0%,#F4F8FD 100%);">
+          <img src="img/logo-full.png" alt="QLAB BIO" style="width:60%;height:auto;object-fit:contain;"/>
+        </div>
+        <div class="info-card-light">
+          <div class="icd-title">연락처</div>
+          <div class="icd-sub">평일 09:00 - 18:00 (점심 12:00 - 13:00)</div>
+          <div class="icd-row">
+            <div class="icd-icon">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="10" rx="2" stroke="#0F62B5" stroke-width="1.3"/><path d="M1 5l7 5 7-5" stroke="#0F62B5" stroke-width="1.3"/></svg>
+            </div>
+            <div>
+              <div class="icd-l">Email</div>
+              <div class="icd-v"><a href="mailto:dntkswlsdn@qlabbio.com">dntkswlsdn@qlabbio.com</a></div>
+            </div>
+          </div>
+          <div class="icd-row">
+            <div class="icd-icon">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 2h3l1.5 3.5-1.5 1C7 8.5 8.5 10 10.5 11l1-1.5L15 11v3c-7 1-14-6-12-12z" stroke="#0F62B5" stroke-width="1.3" stroke-linejoin="round"/></svg>
+            </div>
+            <div>
+              <div class="icd-l">Phone</div>
+              <div class="icd-v">010-4545-3220</div>
+            </div>
+          </div>
+          <div class="icd-row">
+            <div class="icd-icon">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="#0F62B5" stroke-width="1.3"/><path d="M2 8h12M8 2c-2 2-3 4-3 6s1 4 3 6M8 2c2 2 3 4 3 6s-1 4-3 6" stroke="#0F62B5" stroke-width="1.3"/></svg>
+            </div>
+            <div>
+              <div class="icd-l">Website</div>
+              <div class="icd-v">www.qlabbio.com</div>
+            </div>
+          </div>
+        </div>
+        <div class="map-card">
+          <div class="map-place">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+              <path d="M16 2C10.5 2 6 6.5 6 12c0 7.5 10 18 10 18s10-10.5 10-18c0-5.5-4.5-10-10-10z" stroke="#4F86C6" stroke-width="1.6"/>
+              <circle cx="16" cy="12" r="4" stroke="#4F86C6" stroke-width="1.6"/>
+            </svg>
+            <span>오시는 길 — Google Maps 임베드 영역</span>
+          </div>
+          <div class="map-body">
+            <div class="map-addr-l">Address</div>
+            <div class="map-addr-v">서울특별시 강남구 테헤란로 ○○○<br/>QLAB BIO Tower 5F</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div class="bg-white">
+  <div class="section">
+    <div style="text-align:center" class="fi">
+      <div class="eyebrow eyebrow-center">FAQ</div>
+      <h2 class="section-title">자주 묻는 질문</h2>
+      <p class="section-lead section-lead-center">문의 전 자주 묻는 질문을 먼저 확인해 보세요.</p>
+    </div>
+    <div class="faq-wrap" style="margin-top:48px">
+      <div class="faq-item fi d1">
+        <div class="faq-q">
+          <div class="faq-q-text">큐랩바이오의 검사는 일반 소비자도 받을 수 있나요?</div>
+          <div class="faq-q-icon">+</div>
+        </div>
+        <div class="faq-a"><p>현재 큐랩바이오는 의료기관·검진센터·보험사 대상의 B2B 솔루션을 제공하고 있습니다. 일반 소비자는 협력 의료기관 또는 검진센터를 통해 검사를 받으실 수 있습니다.</p></div>
+      </div>
+      <div class="faq-item fi d2">
+        <div class="faq-q">
+          <div class="faq-q-text">검사 결과는 얼마나 신뢰할 수 있나요?</div>
+          <div class="faq-q-icon">+</div>
+        </div>
+        <div class="faq-a"><p>큐랩바이오의 AI 판별 모델은 정확도 92%를 달성했으며, 서울대병원·연세의대 등 주요 의료기관과의 임상 협력을 통해 지속적으로 검증되고 있습니다. 검사 결과는 1차 선별검사로 활용되며, 고위험 판정 시 전문의 진료가 권장됩니다.</p></div>
+      </div>
+      <div class="faq-item fi d3">
+        <div class="faq-q">
+          <div class="faq-q-text">검사 비용은 어떻게 되나요?</div>
+          <div class="faq-q-icon">+</div>
+        </div>
+        <div class="faq-a"><p>기존 뇌 PET·MRI 검사(100만원+) 대비 90% 이상 저렴한 10만원 이하로 책정될 예정입니다. 정확한 가격은 협력 의료기관에 따라 달라질 수 있습니다.</p></div>
+      </div>
+      <div class="faq-item fi d4">
+        <div class="faq-q">
+          <div class="faq-q-text">파트너십 검토는 어떻게 진행되나요?</div>
+          <div class="faq-q-icon">+</div>
+        </div>
+        <div class="faq-a"><p>문의 양식을 통해 의향을 알려주시면, 담당자가 1주일 이내 미팅 일정을 조율합니다. 미팅에서 도입 모델·파일럿 범위·계약 조건을 협의한 후 진행됩니다.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="qfoot">
+  <div class="qfoot-grid">
+    <div>
+      <a href="index.html" class="qfoot-logo">
+        <div class="qnav-mark" style="width:24px;height:24px;border-radius:6px">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="5.5" r="2.8" stroke="white" stroke-width="1.4"/>
+            <path d="M3.5 14c0-2.5 2-4.5 4.5-4.5s4.5 2 4.5 4.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+        </div>
+        QLAB BIO
+      </a>
+      <p class="qfoot-desc">생체지표(바이오마커) 분석 기반 인지장애 조기진단 전문 기업</p>
+      <div class="qfoot-contact">
+        <a href="mailto:dntkswlsdn@qlabbio.com">dntkswlsdn@qlabbio.com</a>
+        <a href="tel:01045453220">010-4545-3220</a>
+      </div>
+    </div>
+    <div>
+      <div class="qfoot-col-title">Company</div>
+      <ul class="qfoot-links">
+        <li><a href="about.html">회사소개</a></li>
+        <li><a href="about.html">인사말</a></li>
+        <li><a href="about.html">연혁</a></li>
+        <li><a href="about.html">파트너십</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="qfoot-col-title">Business</div>
+      <ul class="qfoot-links">
+        <li><a href="business.html">솔루션 개요</a></li>
+        <li><a href="business.html">핵심기술</a></li>
+        <li><a href="business.html">AI 전략</a></li>
+        <li><a href="business.html">R&amp;D</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="qfoot-col-title">Support</div>
+      <ul class="qfoot-links">
+        <li><a href="news.html">뉴스룸</a></li>
+        <li><a href="news.html">보도자료</a></li>
+        <li><a href="contact.html">고객문의</a></li>
+        <li><a href="contact.html">오시는 길</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="qfoot-bottom">
+    <p>© 2026 QLAB BIO (큐랩바이오). All rights reserved.</p>
+    <p>개인정보처리방침 · 이용약관</p>
+  </div>
+</footer>
+
+<script>
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 20);
+});
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.fi').forEach(el => io.observe(el));
+document.querySelectorAll('.faq-item').forEach(item => {
+  item.querySelector('.faq-q').addEventListener('click', () => item.classList.toggle('open'));
+});
+</script>
+</body>
+</html>
