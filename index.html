@@ -11,7 +11,7 @@
 <style>
 /* ─────────── RESET / TOKENS ─────────── */
 *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
-html { scroll-behavior:smooth; -webkit-text-size-adjust:100%; min-width:1280px; }
+html { scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
 body {
   font-family: 'Geist', 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   font-size:15px; line-height:1.5;
@@ -20,7 +20,6 @@ body {
   -webkit-font-smoothing:antialiased;
   font-feature-settings:"ss01", "cv11";
   word-break:keep-all;
-  min-width:1280px;
 }
 a { color:inherit; text-decoration:none; }
 img,svg { display:block; max-width:100%; }
@@ -1509,10 +1508,10 @@ footer {
   <div class="hero-glow"></div>
   <div class="wrap" style="position:relative; z-index:2">
     <div class="hero-tag">
-      <span class="hero-tag-pill">LIVE</span>
-      서울대병원 공동임상 진행 중
+      <span class="hero-tag-pill">QLAB BIO</span>
+      타액 기반 알츠하이머 조기 진단
       <span class="font-mono" style="color:var(--muted)">·</span>
-      <span style="font-family:'Geist Mono', monospace; color:var(--muted)">2026 Q2</span>
+      <span style="font-family:'Geist Mono', monospace; color:var(--muted)">B2B Platform</span>
     </div>
 
     <h1 class="hero-h1">
@@ -1530,10 +1529,9 @@ footer {
     </div>
 
     <div class="hero-meta-strip">
-      <div><span class="dot"></span>SOC 2 Type II</div>
-      <div><span class="dot"></span>HIPAA Ready</div>
-      <div><span class="dot"></span>의료기기 인증 진행중</div>
-      <div><span class="dot"></span>30년+ 임상 경력</div>
+      <div><span class="dot"></span>의료기기 인증 준비중</div>
+      <div><span class="dot"></span>타액 기반 비침습 진단</div>
+      <div><span class="dot"></span>B2B 진단 플랫폼</div>
     </div>
 
     <!-- Dashboard mock -->
@@ -1723,11 +1721,10 @@ footer {
       </div>
     </div>
 
-    <!-- Trust strip -->
+    <!-- Trust strip (디자인 샘플 — 실제 파트너 확정 후 교체 필요) -->
     <div class="trust">
-      <div class="trust-label">신뢰받는 파트너 · Trusted across leading institutions</div>
+      <div class="trust-label">파트너 예시 <span style="font-size:10px; background:#FEF9C3; color:#92400E; border:1px solid #FDE047; border-radius:4px; padding:2px 7px; margin-left:8px; font-weight:700; letter-spacing:.04em;">SAMPLE</span></div>
       <div class="trust-grid">
-        <!-- SNUH 서울대학교병원 -->
         <div class="trust-logo-wrap">
           <svg viewBox="0 0 110 40" width="110" height="40" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect width="110" height="40" rx="6" fill="#003876" fill-opacity=".07"/>
@@ -1735,7 +1732,6 @@ footer {
             <text x="10" y="29" font-family="'Pretendard',sans-serif" font-size="8" font-weight="500" fill="#003876" opacity=".7">서울대학교병원</text>
           </svg>
         </div>
-        <!-- 연세 세브란스 -->
         <div class="trust-logo-wrap">
           <svg viewBox="0 0 110 40" width="110" height="40" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect width="110" height="40" rx="6" fill="#1B3F8B" fill-opacity=".07"/>
@@ -1743,7 +1739,6 @@ footer {
             <text x="10" y="29" font-family="'Pretendard',sans-serif" font-size="8" font-weight="500" fill="#1B3F8B" opacity=".7">세브란스병원</text>
           </svg>
         </div>
-        <!-- 차움병원 -->
         <div class="trust-logo-wrap">
           <svg viewBox="0 0 110 40" width="110" height="40" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect width="110" height="40" rx="6" fill="#00786A" fill-opacity=".07"/>
@@ -1751,7 +1746,6 @@ footer {
             <text x="10" y="29" font-family="'Pretendard',sans-serif" font-size="8" font-weight="500" fill="#00786A" opacity=".7">차움병원</text>
           </svg>
         </div>
-        <!-- 삼성생명 -->
         <div class="trust-logo-wrap">
           <svg viewBox="0 0 110 40" width="110" height="40" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect width="110" height="40" rx="6" fill="#1428A0" fill-opacity=".07"/>
@@ -1759,7 +1753,6 @@ footer {
             <text x="10" y="29" font-family="'Pretendard',sans-serif" font-size="8" font-weight="500" fill="#1428A0" opacity=".7">삼성생명</text>
           </svg>
         </div>
-        <!-- 지역보건소 -->
         <div class="trust-logo-wrap">
           <svg viewBox="0 0 110 40" width="110" height="40" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect width="110" height="40" rx="6" fill="#1F8A82" fill-opacity=".07"/>
@@ -1767,7 +1760,6 @@ footer {
             <text x="10" y="29" font-family="'Pretendard',sans-serif" font-size="8" font-weight="500" fill="#1F8A82" opacity=".7">지역보건소</text>
           </svg>
         </div>
-        <!-- 케어관리 -->
         <div class="trust-logo-wrap">
           <svg viewBox="0 0 110 40" width="110" height="40" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect width="110" height="40" rx="6" fill="#7C3AED" fill-opacity=".07"/>
@@ -1793,33 +1785,19 @@ footer {
       <a href="business.html#pipeline" class="vstrip-card reveal d2">
         <div class="vstrip-num">02</div>
         <div class="vstrip-h">어떻게 동작하나</div>
-        <p class="vstrip-d">타액 한 방울 → 5종 바이오마커 분석 → AI 위험도 산출 → 보고서 발급. 단 48시간, 90%+ 정확도. 채혈 없이 자가 채취 가능.</p>
+        <p class="vstrip-d">타액 한 방울 → 5종 바이오마커 분석 → AI 위험도 산출 → 보고서 발급. 채혈 없이 자가 채취 가능한 비침습적 진단 플랫폼.</p>
         <div class="vstrip-meta"><span>플랫폼 보기</span><span class="vstrip-arrow">→</span></div>
       </a>
       <a href="about.html" class="vstrip-card reveal d3">
         <div class="vstrip-num">03</div>
         <div class="vstrip-h">왜 큐랩인가</div>
-        <p class="vstrip-d">서울대학교병원 공동임상, SCI 저널 50+편, 30년+ 신경생물학 연구. 국제 학술 검증을 거친 진단 플랫폼.</p>
+        <p class="vstrip-d">신경생물학·단백질체학 기반 연구팀이 개발한 알츠하이머 조기 진단 플랫폼. 타액 속 신경호르몬과 Aβ 단백질을 동시 분석합니다.</p>
         <div class="vstrip-meta"><span>회사 소개</span><span class="vstrip-arrow">→</span></div>
       </a>
     </div>
   </div>
 </section>
 
-<!-- ═══════════ PARTNERS ROW ═══════════ -->
-<section class="hpart">
-  <div class="wrap">
-    <div class="hpart-h">파트너십</div>
-    <div class="hpart-row">
-      <span>서울대학교병원</span>
-      <span>분당서울대병원</span>
-      <span>국립암센터</span>
-      <span>보라매병원</span>
-      <span>한림대성심병원</span>
-      <span>강북삼성병원</span>
-    </div>
-  </div>
-</section>
 
 
 <!-- ═══════════ CTA ═══════════ -->
