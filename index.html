@@ -11,7 +11,7 @@
 <style>
 /* ─────────── RESET / TOKENS ─────────── */
 *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
-html { scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
+html { scroll-behavior:smooth; -webkit-text-size-adjust:100%; min-width:1280px; }
 body {
   font-family: 'Geist', 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   font-size:15px; line-height:1.5;
@@ -20,6 +20,7 @@ body {
   -webkit-font-smoothing:antialiased;
   font-feature-settings:"ss01", "cv11";
   word-break:keep-all;
+  min-width:1280px;
 }
 a { color:inherit; text-decoration:none; }
 img,svg { display:block; max-width:100%; }
@@ -516,15 +517,15 @@ body.menu-open { overflow:hidden; }
 .trust-grid {
   display:grid; grid-template-columns:repeat(6,1fr);
   align-items:center;
-  gap:0;
+  gap:8px;
 }
-.trust-grid > div {
-  text-align:center;
-  font-size:14px; color:var(--muted);
-  font-weight:500;
-  padding:12px;
-  letter-spacing:-.005em;
+.trust-logo-wrap {
+  display:flex; align-items:center; justify-content:center;
+  padding:6px;
+  opacity:.85;
+  transition:opacity .15s;
 }
+.trust-logo-wrap:hover { opacity:1; }
 @media (max-width:768px) {
   .trust-grid { grid-template-columns:repeat(3,1fr); gap:8px; }
 }
@@ -1467,9 +1468,7 @@ footer {
 <nav class="nav" id="nav">
   <div class="nav-inner">
     <a href="index.html" class="logo">
-      <span class="logo-mark"></span>
-      QLAB BIO
-      <span class="logo-tag">v1.4</span>
+      <img src="img/logo-mark.png" alt="QLAB BIO" style="height:44px;width:auto;display:block;">
     </a>
     <div class="nav-links">
       <a href="index.html" class="active">Home</a>
@@ -1728,12 +1727,54 @@ footer {
     <div class="trust">
       <div class="trust-label">신뢰받는 파트너 · Trusted across leading institutions</div>
       <div class="trust-grid">
-        <div>SNUH</div>
-        <div>Yonsei</div>
-        <div>차움병원</div>
-        <div>삼성생명</div>
-        <div>지역보건소</div>
-        <div>케어관리</div>
+        <!-- SNUH 서울대학교병원 -->
+        <div class="trust-logo-wrap">
+          <svg viewBox="0 0 110 40" width="110" height="40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="110" height="40" rx="6" fill="#003876" fill-opacity=".07"/>
+            <text x="10" y="15" font-family="'Inter','Pretendard',sans-serif" font-size="9" font-weight="700" fill="#003876" letter-spacing="1">SNUH</text>
+            <text x="10" y="29" font-family="'Pretendard',sans-serif" font-size="8" font-weight="500" fill="#003876" opacity=".7">서울대학교병원</text>
+          </svg>
+        </div>
+        <!-- 연세 세브란스 -->
+        <div class="trust-logo-wrap">
+          <svg viewBox="0 0 110 40" width="110" height="40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="110" height="40" rx="6" fill="#1B3F8B" fill-opacity=".07"/>
+            <text x="10" y="15" font-family="'Inter','Pretendard',sans-serif" font-size="9" font-weight="700" fill="#1B3F8B" letter-spacing="1">YONSEI</text>
+            <text x="10" y="29" font-family="'Pretendard',sans-serif" font-size="8" font-weight="500" fill="#1B3F8B" opacity=".7">세브란스병원</text>
+          </svg>
+        </div>
+        <!-- 차움병원 -->
+        <div class="trust-logo-wrap">
+          <svg viewBox="0 0 110 40" width="110" height="40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="110" height="40" rx="6" fill="#00786A" fill-opacity=".07"/>
+            <text x="10" y="15" font-family="'Inter','Pretendard',sans-serif" font-size="9" font-weight="700" fill="#00786A" letter-spacing="1">CHAUM</text>
+            <text x="10" y="29" font-family="'Pretendard',sans-serif" font-size="8" font-weight="500" fill="#00786A" opacity=".7">차움병원</text>
+          </svg>
+        </div>
+        <!-- 삼성생명 -->
+        <div class="trust-logo-wrap">
+          <svg viewBox="0 0 110 40" width="110" height="40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="110" height="40" rx="6" fill="#1428A0" fill-opacity=".07"/>
+            <text x="10" y="15" font-family="'Inter','Pretendard',sans-serif" font-size="9" font-weight="700" fill="#1428A0" letter-spacing="1">SAMSUNG</text>
+            <text x="10" y="29" font-family="'Pretendard',sans-serif" font-size="8" font-weight="500" fill="#1428A0" opacity=".7">삼성생명</text>
+          </svg>
+        </div>
+        <!-- 지역보건소 -->
+        <div class="trust-logo-wrap">
+          <svg viewBox="0 0 110 40" width="110" height="40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="110" height="40" rx="6" fill="#1F8A82" fill-opacity=".07"/>
+            <text x="10" y="15" font-family="'Inter','Pretendard',sans-serif" font-size="9" font-weight="700" fill="#1F8A82" letter-spacing="1">PUBLIC</text>
+            <text x="10" y="29" font-family="'Pretendard',sans-serif" font-size="8" font-weight="500" fill="#1F8A82" opacity=".7">지역보건소</text>
+          </svg>
+        </div>
+        <!-- 케어관리 -->
+        <div class="trust-logo-wrap">
+          <svg viewBox="0 0 110 40" width="110" height="40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="110" height="40" rx="6" fill="#7C3AED" fill-opacity=".07"/>
+            <text x="10" y="15" font-family="'Inter','Pretendard',sans-serif" font-size="9" font-weight="700" fill="#7C3AED" letter-spacing="1">CARE+</text>
+            <text x="10" y="29" font-family="'Pretendard',sans-serif" font-size="8" font-weight="500" fill="#7C3AED" opacity=".7">케어관리</text>
+          </svg>
+        </div>
       </div>
     </div>
   </div>
