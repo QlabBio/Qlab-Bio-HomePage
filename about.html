@@ -108,9 +108,16 @@ button { font:inherit; cursor:pointer; border:none; background:none; color:inher
   display:flex; align-items:center; gap:8px;
 }
 .logo {
-  display:inline-flex; align-items:center; gap:8px;
+  display:inline-flex; align-items:center; gap:10px;
   font-size:14px; font-weight:600;
   letter-spacing:-.01em; color:var(--ink);
+  text-decoration:none;
+}
+.logo-text {
+  font-family:'Geist','Pretendard',sans-serif;
+  font-size:17px; font-weight:700;
+  letter-spacing:-.02em; color:var(--ink);
+  white-space:nowrap;
 }
 .logo-mark {
   width:24px; height:24px;
@@ -1497,9 +1504,8 @@ footer {
 <nav class="nav" id="nav">
   <div class="nav-inner">
     <a href="index.html" class="logo">
-      <span class="logo-mark"></span>
-      QLAB BIO
-      <span class="logo-tag">v1.4</span>
+      <img src="img/logo-mark.png" alt="QLAB BIO" style="height:44px;width:auto;display:block;">
+      <span class="logo-text">QLAB BIO</span>
     </a>
     <div class="nav-links">
       <a href="index.html" class="active">Home</a>
