@@ -11,7 +11,7 @@
 <style>
 /* ─────────── RESET / TOKENS ─────────── */
 *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
-html { scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
+html { scroll-behavior:smooth; -webkit-text-size-adjust:100%; min-width:1280px; }
 body {
   font-family: 'Geist', 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   font-size:15px; line-height:1.5;
@@ -20,6 +20,7 @@ body {
   -webkit-font-smoothing:antialiased;
   font-feature-settings:"ss01", "cv11";
   word-break:keep-all;
+  min-width:1280px;
 }
 a { color:inherit; text-decoration:none; }
 img,svg { display:block; max-width:100%; }
@@ -220,10 +221,71 @@ button { font:inherit; cursor:pointer; border:none; background:none; color:inher
 }
 body.menu-open { overflow:hidden; }
 
+/* ─────────── HERO BANNER (lab image, top of page) ─────────── */
+.hero-banner {
+  position:relative;
+  width:100%;
+  height:clamp(280px, 38vw, 440px);
+  overflow:hidden;
+  background:#0A0A0B;
+}
+.hero-banner img {
+  width:100%; height:100%;
+  object-fit:cover; object-position:center 40%;
+  display:block;
+  filter:saturate(.92);
+}
+.hero-banner::after {
+  content:''; position:absolute; inset:0;
+  background:
+    linear-gradient(180deg, rgba(8,9,10,0) 0%, rgba(8,9,10,0) 55%, rgba(250,250,250,.65) 92%, #FAFAFA 100%),
+    linear-gradient(135deg, rgba(31,138,130,.15) 0%, transparent 50%);
+  pointer-events:none;
+}
+.hero-banner-content {
+  position:absolute; left:0; right:0; bottom:48px;
+  max-width:1240px; margin:0 auto;
+  padding:0 32px;
+  z-index:2;
+}
+.hero-banner-eyebrow {
+  display:inline-flex; align-items:center; gap:10px;
+  font-family:'Geist Mono', monospace;
+  font-size:11px; font-weight:600;
+  letter-spacing:.08em; text-transform:uppercase;
+  color:#fff;
+  background:rgba(8,9,10,.55);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  padding:7px 14px;
+  border-radius:100px;
+  border:1px solid rgba(255,255,255,.15);
+  margin-bottom:14px;
+}
+.hero-banner-eyebrow::before {
+  content:''; width:6px; height:6px; border-radius:50%;
+  background:#22D17C;
+  box-shadow:0 0 8px rgba(34,209,124,.7);
+  animation:pulse 2s ease-in-out infinite;
+}
+.hero-banner-title {
+  font-size:clamp(22px, 2.6vw, 32px);
+  font-weight:500; letter-spacing:-.025em;
+  line-height:1.25;
+  color:#fff;
+  max-width:680px;
+  text-shadow:0 2px 12px rgba(0,0,0,.35);
+}
+.hero-banner-title .blue { color:#7FCFC7; }
+@media (max-width:700px) {
+  .hero-banner { height:clamp(220px, 60vw, 320px); }
+  .hero-banner-content { bottom:24px; padding:0 20px; }
+}
+
 /* ─────────── HERO ─────────── */
 .hero {
   position:relative;
-  padding:80px 0 0;
+  padding:64px 0 0;
   overflow:hidden;
 }
 .hero-glow {
@@ -768,16 +830,16 @@ section { padding:120px 0; position:relative; }
 }
 .stage-media-bar .meta { color:#fff; text-transform:none; letter-spacing:0; }
 .stage-media-body {
-  display:grid; grid-template-columns: 180px 1fr;
-  gap:14px; padding:14px;
+  display:grid; grid-template-columns: 320px 1fr;
+  gap:18px; padding:18px;
   flex:1; min-height:0;
 }
 .stage-media-thumb {
   background:#000 center/cover no-repeat;
   border:1px solid var(--dark-line);
-  border-radius:6px;
+  border-radius:8px;
   position:relative; overflow:hidden;
-  min-height:200px;
+  min-height:340px;
 }
 .stage-media-thumb.contain { background-size:contain; background-color:#0E0F12; background-position:center; background-repeat:no-repeat; }
 .stage-media-thumb-tag {
@@ -1369,6 +1431,14 @@ section { padding:120px 0; position:relative; }
 .showcase-grid {
   display:grid; grid-template-columns:1.15fr .85fr; gap:20px;
 }
+.showcase-grid-split {
+  grid-template-columns:1fr 1fr; gap:48px;
+  align-items:center;
+}
+.showcase-grid-split .showcase-head { margin-bottom:0; max-width:none; }
+.showcase-grid-split .sc-card { background:transparent; border:none; }
+.showcase-grid-split .sc-card:hover { transform:none; box-shadow:none; }
+.showcase-grid-split .sc-img-wrap { border-radius:18px; border:1px solid var(--line); }
 .sc-card {
   position:relative;
   background:#fff;
@@ -1592,6 +1662,15 @@ footer {
   <a href="contact.html">Contact <span>05</span></a>
   <div class="menu-foot">
     <a href="contact.html" class="btn btn-dark">파트너십 문의 →</a>
+  </div>
+</div>
+
+<!-- ═══════════ HERO BANNER (Lab) ═══════════ -->
+<div class="hero-banner">
+  <img src="img/lab-real.jpg" alt="QLAB BIO 연구 인프라"/>
+  <div class="hero-banner-content">
+    <span class="hero-banner-eyebrow">Research Infrastructure</span>
+    <h2 class="hero-banner-title">신경생물학·단백질체학 기반의<br/><span class="blue">정밀 진단 인프라</span>를 구축합니다.</h2>
   </div>
 </div>
 
@@ -1891,48 +1970,28 @@ footer {
 </section>
 
 
-<!-- ═══════════ SHOWCASE (Lab + Analyzer) ═══════════ -->
+<!-- ═══════════ SHOWCASE (Analyzer device concept) ═══════════ -->
 <section class="showcase">
   <div class="wrap">
-    <div class="showcase-head reveal">
-      <div class="showcase-eyebrow">Research &amp; Device</div>
-      <h2 class="showcase-h2">연구실에서 진단까지,<br/><span class="blue">한 흐름으로 연결</span>합니다.</h2>
-      <p class="showcase-sub">신경생물학·단백질체학 기반 연구 인프라와 타액 바이오마커 분석 기기로 인지장애 조기 진단 흐름을 완성합니다.</p>
-    </div>
-
-    <div class="showcase-grid">
-      <!-- Lab card -->
-      <div class="sc-card reveal">
-        <div class="sc-img-wrap">
-          <span class="sc-tag">Research Lab</span>
-          <img src="img/lab-real.jpg" alt="QLAB BIO 연구 인프라"/>
-          <div class="sc-overlay"></div>
-        </div>
-        <div class="sc-body">
-          <h3>신경생물학 · 단백질체학 연구 인프라</h3>
-          <p>타액 속 신경호르몬과 Aβ 단백질을 동시 측정하기 위한 정밀 분석 환경. 바이오마커 패널 검증과 AI 모델 학습 데이터를 생성하는 연구 기반입니다.</p>
-          <div class="sc-meta">
-            <span><span class="sc-meta-dot"></span>Wet Lab · Bioanalysis</span>
-            <span>QLAB BIO</span>
-          </div>
+    <div class="showcase-grid showcase-grid-split">
+      <div class="showcase-head reveal">
+        <div class="showcase-eyebrow">Device Concept</div>
+        <h2 class="showcase-h2">한 대의 기기로,<br/><span class="blue">5종 바이오마커</span> 동시 분석.</h2>
+        <p class="showcase-sub">자가 채취 키트로 채취된 타액 검체를 검진센터·의료기관에서 직접 분석할 수 있는 데스크탑 분석기 컨셉입니다. Aβ40, Aβ42, Cortisol, DHEA, Melatonin 패널을 한 번의 인서션으로 측정합니다.</p>
+        <div style="display:flex; gap:8px; margin-top:18px; flex-wrap:wrap;">
+          <span style="font-family:'Geist Mono',monospace; font-size:10px; padding:5px 10px; border:1px solid var(--line); border-radius:6px; color:var(--muted); letter-spacing:.04em; text-transform:uppercase;">Desktop Form Factor</span>
+          <span style="font-family:'Geist Mono',monospace; font-size:10px; padding:5px 10px; border:1px solid var(--line); border-radius:6px; color:var(--muted); letter-spacing:.04em; text-transform:uppercase;">Touch UI</span>
+          <span style="font-family:'Geist Mono',monospace; font-size:10px; padding:5px 10px; background:#FEF9C3; border:1px solid #FDE047; border-radius:6px; color:#92400E; letter-spacing:.04em; text-transform:uppercase; font-weight:700;">Sample · 디자인 컨셉</span>
         </div>
       </div>
 
       <!-- Analyzer card -->
       <div class="sc-card reveal d2">
-        <div class="sc-img-wrap">
+        <div class="sc-img-wrap" style="aspect-ratio: 1 / 1;">
           <span class="sc-tag">Device Concept</span>
           <span class="sc-sample-tag">SAMPLE</span>
           <img src="img/analyzer.jpg" alt="SalivaScan 분석기 컨셉 이미지"/>
           <div class="sc-overlay"></div>
-        </div>
-        <div class="sc-body">
-          <h3>타액 바이오마커 분석기 (컨셉)</h3>
-          <p>5종 바이오마커 동시 분석을 위한 데스크탑 기기 컨셉 디자인. 자가 채취 키트로 채취된 검체를 검진센터·의료기관에서 직접 분석 가능한 형태로 설계됩니다.</p>
-          <div class="sc-meta">
-            <span><span class="sc-meta-dot"></span>Concept · 디자인 샘플</span>
-            <span>QLB-Analyzer</span>
-          </div>
         </div>
       </div>
     </div>
@@ -2130,7 +2189,7 @@ const pipelineData = [
       </div>
       <div class="stage-media-body">
         <div class="stage-media-thumb" style="background:#0E0F12; display:flex; align-items:center; justify-content:center; padding:20px;">
-          <svg viewBox="0 0 320 220" width="100%" height="100%" style="max-width:280px;">
+          <svg viewBox="0 0 320 220" width="100%" height="100%">
             <defs>
               <radialGradient id="wellGlow" cx="50%" cy="50%" r="50%">
                 <stop offset="0%" stop-color="#1F8A82" stop-opacity="1"/>
@@ -2233,7 +2292,7 @@ const pipelineData = [
       </div>
       <div class="stage-media-body">
         <div class="stage-media-thumb" style="background:#0E0F12; display:flex; align-items:center; justify-content:center; padding:16px;">
-          <svg viewBox="0 0 320 220" width="100%" height="100%" style="max-width:280px;">
+          <svg viewBox="0 0 320 220" width="100%" height="100%">
             <defs>
               <radialGradient id="nodeGlow" cx="50%" cy="50%" r="50%">
                 <stop offset="0%" stop-color="#1F8A82" stop-opacity="1"/>
