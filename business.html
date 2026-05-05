@@ -774,7 +774,7 @@ section { padding:120px 0; position:relative; }
   align-items:center;
 }
 .stage-media-thumb {
-  background:transparent !important;
+  background-color:transparent !important;
   border:none !important;
   border-radius:0 !important;
   padding:0 !important;
@@ -784,7 +784,7 @@ section { padding:120px 0; position:relative; }
   display:flex !important;
   align-items:center; justify-content:center;
 }
-.stage-media-thumb.contain { background-size:contain; background-color:transparent !important; background-position:center; background-repeat:no-repeat; }
+.stage-media-thumb.contain { background-size:contain; background-position:center; background-repeat:no-repeat; min-height:440px; }
 .stage-media-thumb svg { width:100%; height:auto; max-width:none; }
 .stage-media-thumb img { max-width:100%; max-height:520px; height:auto; }
 .stage-media-thumb-tag {
@@ -2008,20 +2008,20 @@ footer {
       <div class="phead-text">
         <div class="phead-eyebrow">
           <span class="hero-tag-pill">PLATFORM</span>
-          <span style="font-family:'Geist Mono',monospace; font-size:11px; color:var(--muted)">qlb-v3.2 · production</span>
+          <span style="font-family:'Geist Mono',monospace; font-size:11px; color:var(--muted)">QLAB BIO · 진단 플랫폼</span>
         </div>
         <h1 class="phead-h1">
           타액 한 방울로<br/>
           <span class="blue">인지 건강을 측정합니다.</span>
         </h1>
         <p class="phead-sub">
-          채혈 없이, 48시간 안에, 5종 바이오마커와 AI 모델로 인지장애 위험도를 정량 분석하는 B2B 플랫폼. 의료기관·검진센터·보험사를 위한 API와 보고서 시스템을 제공합니다.
+          채혈 없이, 5종 바이오마커와 AI 모델로 인지장애 위험도를 정량 분석하는 B2B 플랫폼. 의료기관·검진센터·보험사를 위한 API와 보고서 시스템을 함께 제공합니다.
         </p>
         <div class="phead-meta">
           <div><span class="dot"></span>채혈 불필요</div>
-          <div><span class="dot"></span>48시간 내 결과</div>
-          <div><span class="dot"></span>90% 이상 정확도</div>
-          <div><span class="dot"></span>EMR 연동</div>
+          <div><span class="dot"></span>5종 바이오마커 동시 분석</div>
+          <div><span class="dot"></span>AI 위험도 산출</div>
+          <div><span class="dot"></span>의료기관 시스템 연동</div>
         </div>
       </div>
       <figure class="phead-visual phead-visual-corners">
@@ -2041,8 +2041,8 @@ footer {
     <div class="sec-head">
       <div class="sec-num"><span>SECTION</span><strong>01 / Why now</strong></div>
       <div>
-        <h2 class="sec-title">조기 발견의 <span class="blue">기회 비용</span><br/><span class="light">— 일쪽 의료 부담을 측정 가능하게.</span></h2>
-        <p class="sec-lead">한국은 세계에서 가장 빠르게 고령화되는 사회입니다. 그러나 인지장애 환자의 절반은 자신의 상태를 모르며, 조기 선별이 늦어질수록 사회적 비용은 기하급수적으로 증가합니다.</p>
+        <h2 class="sec-title">조기 발견의 <span class="blue">기회 비용</span><br/><span class="light">— 늦을수록 커지는 부담.</span></h2>
+        <p class="sec-lead">한국은 세계에서 가장 빠르게 고령화되는 사회입니다. 그럼에도 인지장애 환자의 상당수는 자신의 상태를 모른 채 지내며, 조기 선별이 늦어질수록 사회적 비용은 기하급수적으로 증가합니다.</p>
       </div>
     </div>
 
@@ -2071,7 +2071,7 @@ footer {
       <div class="prob-row reveal d4">
         <span class="prob-row-i">004</span>
         <span class="prob-row-name">조기개입 시 절감 효과 <span class="tag">5y+</span></span>
-        <span class="prob-row-desc">머신경장애 단계에서 5년 이상 미리 개입하면 평균 비용이 절반 이하로 줄어듭니다.</span>
+        <span class="prob-row-desc">경도인지장애(MCI) 단계에서 5년 이상 조기에 개입할 경우 평균 비용이 절반 이하로 감소하는 것으로 보고됩니다.</span>
         <span class="prob-row-num">−50<small>%</small></span>
       </div>
     </div>
@@ -2084,8 +2084,8 @@ footer {
     <div class="sec-head">
       <div class="sec-num"><span>SECTION</span><strong>02 / How it works</strong></div>
       <div>
-        <h2 class="sec-title">타액 한 방울에서 <span class="blue">위험도 보고서</span>까지<br/><span class="light">— 평균 48시간.</span></h2>
-        <p class="sec-lead">의료인 도움 없이 자가 채취한 검체를 받아 신경호르몬·Aβ 단백질을 동시 분석하고, AI 모델이 위험도를 3단계로 분류합니다.</p>
+        <h2 class="sec-title">타액 한 방울에서 <span class="blue">위험도 보고서</span>까지<br/><span class="light">— 네 단계로 완결되는 진단 플로우.</span></h2>
+        <p class="sec-lead">의료인의 도움 없이 자가 채취한 검체를 받아 신경호르몬과 Aβ 단백질을 동시에 분석하고, AI 모델이 위험도를 세 단계로 분류해 보고합니다.</p>
       </div>
     </div>
 
@@ -2205,7 +2205,7 @@ footer {
     <p>인지 건강의 다음 표준을 함께 정의해 보세요.</p>
     <div class="cta-actions">
       <a href="contact.html" class="btn btn-blue">파트너십 시작하기 <span class="arrow">→</span></a>
-      <a href="business.html" class="btn btn-outline">플랫폼 자료 다운로드 <span class="arrow">↓</span></a>
+      <a href="contact.html" class="btn btn-outline">데모 요청하기 <span class="arrow">→</span></a>
     </div>
   </div>
 </section>
