@@ -225,7 +225,8 @@ body.menu-open { overflow:hidden; }
 .hero-banner {
   position:relative;
   width:100%;
-  height:640px;
+  aspect-ratio: 16 / 6;
+  max-height:680px;
   overflow:hidden;
   background:#0A0A0B;
   border-bottom:1px solid var(--line);
@@ -234,56 +235,6 @@ body.menu-open { overflow:hidden; }
   width:100%; height:100%;
   object-fit:cover; object-position:center 50%;
   display:block;
-}
-.hero-banner::after {
-  content:''; position:absolute; inset:0;
-  background:linear-gradient(90deg, rgba(8,9,10,.55) 0%, rgba(8,9,10,.30) 40%, transparent 70%);
-  pointer-events:none;
-  z-index:1;
-}
-.hero-banner-content {
-  position:absolute; left:0; right:0; top:50%;
-  transform:translateY(-50%);
-  max-width:1240px; margin:0 auto;
-  padding:0 32px;
-  z-index:2;
-}
-.hero-banner-card {
-  display:block;
-  background:rgba(8,9,10,.82);
-  backdrop-filter:blur(18px) saturate(160%);
-  -webkit-backdrop-filter:blur(18px) saturate(160%);
-  border:1px solid rgba(255,255,255,.12);
-  border-radius:16px;
-  padding:24px 28px;
-  max-width:560px;
-  box-shadow:0 20px 60px -20px rgba(0,0,0,.55);
-}
-.hero-banner-eyebrow {
-  display:inline-flex; align-items:center; gap:10px;
-  font-family:'Geist Mono', monospace;
-  font-size:11px; font-weight:600;
-  letter-spacing:.08em; text-transform:uppercase;
-  color:#7FCFC7;
-  margin-bottom:14px;
-}
-.hero-banner-eyebrow::before {
-  content:''; width:6px; height:6px; border-radius:50%;
-  background:#22D17C;
-  box-shadow:0 0 8px rgba(34,209,124,.7);
-  animation:pulse 2s ease-in-out infinite;
-}
-.hero-banner-title {
-  font-size:26px;
-  font-weight:500; letter-spacing:-.025em;
-  line-height:1.32;
-  color:#fff;
-}
-.hero-banner-title .blue { color:#7FCFC7; }
-.hero-banner-sub {
-  font-size:13px; color:rgba(255,255,255,.78);
-  line-height:1.6; margin-top:10px;
-  max-width:480px;
 }
 
 /* ─────────── HERO ─────────── */
@@ -1677,13 +1628,6 @@ footer {
 <!-- ═══════════ HERO BANNER (Lab) ═══════════ -->
 <div class="hero-banner">
   <img src="img/lab-real.jpg" alt="QLAB BIO 연구 인프라"/>
-  <div class="hero-banner-content">
-    <div class="hero-banner-card">
-      <span class="hero-banner-eyebrow">Research Infrastructure</span>
-      <h2 class="hero-banner-title">신경생물학·단백질체학 기반의<br/><span class="blue">정밀 진단 인프라</span>를 구축합니다.</h2>
-      <p class="hero-banner-sub">타액 속 신경호르몬과 Aβ 단백질을 동시에 측정하는 정밀 분석 환경에서 바이오마커 패널을 검증하고 AI 모델 학습 데이터를 생성합니다.</p>
-    </div>
-  </div>
 </div>
 
 <!-- ═══════════ HERO ═══════════ -->
