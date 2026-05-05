@@ -221,40 +221,51 @@ button { font:inherit; cursor:pointer; border:none; background:none; color:inher
 }
 body.menu-open { overflow:hidden; }
 
-/* ─────────── HERO BANNER (lab image, top of page) ─────────── */
-.hero-banner {
+/* ─────────── HERO HEAD GRID (text + small lab thumb) ─────────── */
+.hero-head {
+  display:grid;
+  grid-template-columns: minmax(0, 1fr) clamp(260px, 32vw, 420px);
+  gap:48px;
+  align-items:center;
+  margin-bottom:36px;
+}
+.hero-thumb {
   position:relative;
-  width:100%;
-  aspect-ratio: 16 / 5;
+  aspect-ratio: 4 / 3;
+  border-radius:14px;
   overflow:hidden;
   background:#0A0A0B;
-  border-bottom:1px solid var(--line);
+  border:1px solid var(--line);
+  box-shadow:0 12px 40px -12px rgba(15,23,42,.18);
 }
-.hero-banner img {
+.hero-thumb img {
   width:100%; height:100%;
-  object-fit:cover; object-position:center 50%;
+  object-fit:cover; object-position:center 45%;
   display:block;
 }
-.hero-banner-caption {
+.hero-thumb-caption {
   position:absolute;
-  right:20px; bottom:14px;
-  display:inline-flex; align-items:center; gap:7px;
+  right:10px; bottom:10px;
+  display:inline-flex; align-items:center; gap:6px;
   font-family:'Geist Mono', monospace;
-  font-size:10px; font-weight:600;
+  font-size:9px; font-weight:600;
   letter-spacing:.08em; text-transform:uppercase;
-  color:rgba(255,255,255,.86);
-  background:rgba(8,9,10,.55);
+  color:rgba(255,255,255,.92);
+  background:rgba(8,9,10,.6);
   backdrop-filter:blur(8px);
   -webkit-backdrop-filter:blur(8px);
-  padding:5px 10px;
+  padding:4px 8px;
   border-radius:100px;
-  border:1px solid rgba(255,255,255,.14);
-  z-index:2;
+  border:1px solid rgba(255,255,255,.16);
 }
-.hero-banner-caption::before {
+.hero-thumb-caption::before {
   content:''; width:5px; height:5px; border-radius:50%;
   background:#22D17C;
   box-shadow:0 0 6px rgba(34,209,124,.7);
+}
+@media (max-width:900px) {
+  .hero-head { grid-template-columns:1fr; gap:24px; }
+  .hero-thumb { max-width:480px; aspect-ratio: 16 / 9; }
 }
 
 /* ─────────── HERO ─────────── */
@@ -1651,30 +1662,33 @@ footer {
   </div>
 </div>
 
-<!-- ═══════════ HERO BANNER (Lab) ═══════════ -->
-<div class="hero-banner">
-  <img src="img/lab-real.jpg" alt="QLAB BIO 연구 인프라"/>
-  <span class="hero-banner-caption">QLAB BIO · Research Lab</span>
-</div>
-
 <!-- ═══════════ HERO ═══════════ -->
 <header class="hero">
   <div class="hero-glow"></div>
   <div class="wrap" style="position:relative; z-index:2">
-    <div class="hero-tag">
-      <span class="hero-tag-pill">QLAB BIO</span>
-      타액 기반 알츠하이머 조기 진단
-      <span class="font-mono" style="color:var(--muted)">·</span>
-      <span style="font-family:'Geist Mono', monospace; color:var(--muted)">B2B Platform</span>
+    <div class="hero-head">
+      <div class="hero-head-text">
+        <div class="hero-tag">
+          <span class="hero-tag-pill">QLAB BIO</span>
+          타액 기반 알츠하이머 조기 진단
+          <span class="font-mono" style="color:var(--muted)">·</span>
+          <span style="font-family:'Geist Mono', monospace; color:var(--muted)">B2B Platform</span>
+        </div>
+
+        <h1 class="hero-h1">
+          <span data-i18n data-kr-html="타액 한 방울로<br/>인지장애 위험을 <span class='underline'>더 일찍</span> <span class='blue'>읽어냅니다.</span>" data-en-html="Predict cognitive decline<br/>from <span class='underline'>a single drop</span> <span class='blue'>of saliva.</span>">타액 한 방울로<br/>인지장애 위험을 <span class='underline'>더 일찍</span> <span class='blue'>읽어냅니다.</span></span>
+        </h1>
+
+        <p class="hero-sub" data-i18n data-kr="QLAB BIO는 타액 속 신경호르몬과 Aβ 단백질을 동시에 분석해 인지장애 위험도를 조기에 측정합니다. 의료기관·검진센터·보험사를 위한 B2B 진단 플랫폼입니다." data-en="QLAB BIO simultaneously analyzes neuro-hormones and amyloid-beta proteins in saliva to estimate cognitive decline risk early. A B2B diagnostic platform for hospitals, screening centers, and insurers.">
+          QLAB BIO는 타액 속 신경호르몬과 Aβ 단백질을 동시에 분석해 인지장애 위험도를 조기에 측정합니다. 의료기관·검진센터·보험사를 위한 B2B 진단 플랫폼입니다.
+        </p>
+      </div>
+
+      <figure class="hero-thumb">
+        <img src="img/lab-real.jpg" alt="QLAB BIO 연구 인프라"/>
+        <span class="hero-thumb-caption">Research Lab</span>
+      </figure>
     </div>
-
-    <h1 class="hero-h1">
-      <span data-i18n data-kr-html="타액 한 방울로<br/>인지장애 위험을 <span class='underline'>더 일찍</span> <span class='blue'>읽어냅니다.</span>" data-en-html="Predict cognitive decline<br/>from <span class='underline'>a single drop</span> <span class='blue'>of saliva.</span>">타액 한 방울로<br/>인지장애 위험을 <span class='underline'>더 일찍</span> <span class='blue'>읽어냅니다.</span></span>
-    </h1>
-
-    <p class="hero-sub" data-i18n data-kr="QLAB BIO는 타액 속 신경호르몬과 Aβ 단백질을 동시에 분석해 인지장애 위험도를 조기에 측정합니다. 의료기관·검진센터·보험사를 위한 B2B 진단 플랫폼입니다." data-en="QLAB BIO simultaneously analyzes neuro-hormones and amyloid-beta proteins in saliva to estimate cognitive decline risk early. A B2B diagnostic platform for hospitals, screening centers, and insurers.">
-      QLAB BIO는 타액 속 신경호르몬과 Aβ 단백질을 동시에 분석해 인지장애 위험도를 조기에 측정합니다. 의료기관·검진센터·보험사를 위한 B2B 진단 플랫폼입니다.
-    </p>
 
     <div class="hero-actions">
       <a href="contact.html" class="btn btn-blue"><span data-i18n data-kr="파트너십 시작하기" data-en="Start a partnership">파트너십 시작하기</span> <span class="arrow">→</span></a>
