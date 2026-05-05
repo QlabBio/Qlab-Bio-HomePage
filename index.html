@@ -1349,6 +1349,98 @@ section { padding:120px 0; position:relative; }
   .vstrip-card { min-height:auto; padding:28px 24px; }
 }
 
+/* ─────────── SHOWCASE (lab + analyzer images) ─────────── */
+.showcase { padding:80px 0 100px; background:var(--bg); }
+.showcase-head { display:flex; flex-direction:column; gap:8px; margin-bottom:36px; max-width:680px; }
+.showcase-eyebrow {
+  font-family:'Geist Mono', monospace;
+  font-size:11px; color:var(--blue);
+  letter-spacing:.08em; text-transform:uppercase;
+  display:flex; align-items:center; gap:10px;
+}
+.showcase-eyebrow::before { content:''; width:24px; height:1px; background:var(--blue); }
+.showcase-h2 {
+  font-size:clamp(26px, 3vw, 36px); font-weight:500;
+  letter-spacing:-.025em; line-height:1.2; color:var(--ink);
+}
+.showcase-h2 .blue { color:var(--blue); }
+.showcase-sub { font-size:15px; color:var(--text); line-height:1.65; max-width:560px; margin-top:6px; }
+
+.showcase-grid {
+  display:grid; grid-template-columns:1.15fr .85fr; gap:20px;
+}
+.sc-card {
+  position:relative;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:14px;
+  overflow:hidden;
+  display:flex; flex-direction:column;
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+.sc-card:hover { transform:translateY(-2px); box-shadow:0 18px 40px -12px rgba(15,23,42,.18); }
+.sc-img-wrap {
+  position:relative;
+  aspect-ratio: 16 / 10;
+  overflow:hidden;
+  background:linear-gradient(135deg, #E6F3F1 0%, #F4F8FD 100%);
+}
+.sc-img-wrap img {
+  width:100%; height:100%;
+  object-fit:cover; display:block;
+  transition:transform .5s ease;
+}
+.sc-card:hover .sc-img-wrap img { transform:scale(1.03); }
+.sc-overlay {
+  position:absolute; inset:0;
+  background:linear-gradient(180deg, transparent 50%, rgba(8,9,10,.55) 100%);
+  pointer-events:none;
+}
+.sc-tag {
+  position:absolute; top:14px; left:14px; z-index:2;
+  display:inline-flex; align-items:center; gap:6px;
+  font-family:'Geist Mono', monospace;
+  font-size:10px; font-weight:600;
+  letter-spacing:.08em; text-transform:uppercase;
+  background:rgba(255,255,255,.95);
+  color:var(--blue);
+  padding:5px 10px; border-radius:100px;
+  border:1px solid var(--line);
+}
+.sc-tag::before { content:''; width:5px; height:5px; border-radius:50%; background:var(--blue); }
+.sc-sample-tag {
+  position:absolute; top:14px; right:14px; z-index:2;
+  font-family:'Geist Mono', monospace;
+  font-size:10px; font-weight:700;
+  letter-spacing:.06em;
+  background:#FEF9C3; color:#92400E;
+  border:1px solid #FDE047;
+  padding:4px 9px; border-radius:6px;
+}
+.sc-body { padding:22px 24px 24px; }
+.sc-body h3 {
+  font-size:18px; font-weight:600;
+  letter-spacing:-.02em; color:var(--ink);
+  margin-bottom:8px;
+}
+.sc-body p {
+  font-size:14px; line-height:1.65; color:var(--text);
+}
+.sc-meta {
+  margin-top:14px; padding-top:14px;
+  border-top:1px solid var(--line-soft);
+  display:flex; justify-content:space-between; align-items:center;
+  font-family:'Geist Mono', monospace;
+  font-size:11px; color:var(--muted);
+  letter-spacing:.04em; text-transform:uppercase;
+}
+.sc-meta-dot { width:6px; height:6px; border-radius:50%; background:#22D17C; box-shadow:0 0 6px rgba(34,209,124,.5); display:inline-block; margin-right:6px; vertical-align:1px; }
+
+@media (max-width:900px) {
+  .showcase { padding:60px 0 80px; }
+  .showcase-grid { grid-template-columns:1fr; }
+}
+
 /* ─────────── HOME PARTNERS ROW ─────────── */
 .hpart { padding:60px 0 100px; background:var(--bg); }
 .hpart-h {
@@ -1798,6 +1890,54 @@ footer {
   </div>
 </section>
 
+
+<!-- ═══════════ SHOWCASE (Lab + Analyzer) ═══════════ -->
+<section class="showcase">
+  <div class="wrap">
+    <div class="showcase-head reveal">
+      <div class="showcase-eyebrow">Research &amp; Device</div>
+      <h2 class="showcase-h2">연구실에서 진단까지,<br/><span class="blue">한 흐름으로 연결</span>합니다.</h2>
+      <p class="showcase-sub">신경생물학·단백질체학 기반 연구 인프라와 타액 바이오마커 분석 기기로 인지장애 조기 진단 흐름을 완성합니다.</p>
+    </div>
+
+    <div class="showcase-grid">
+      <!-- Lab card -->
+      <div class="sc-card reveal">
+        <div class="sc-img-wrap">
+          <span class="sc-tag">Research Lab</span>
+          <img src="img/lab-real.jpg" alt="QLAB BIO 연구 인프라"/>
+          <div class="sc-overlay"></div>
+        </div>
+        <div class="sc-body">
+          <h3>신경생물학 · 단백질체학 연구 인프라</h3>
+          <p>타액 속 신경호르몬과 Aβ 단백질을 동시 측정하기 위한 정밀 분석 환경. 바이오마커 패널 검증과 AI 모델 학습 데이터를 생성하는 연구 기반입니다.</p>
+          <div class="sc-meta">
+            <span><span class="sc-meta-dot"></span>Wet Lab · Bioanalysis</span>
+            <span>QLAB BIO</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Analyzer card -->
+      <div class="sc-card reveal d2">
+        <div class="sc-img-wrap">
+          <span class="sc-tag">Device Concept</span>
+          <span class="sc-sample-tag">SAMPLE</span>
+          <img src="img/analyzer.jpg" alt="SalivaScan 분석기 컨셉 이미지"/>
+          <div class="sc-overlay"></div>
+        </div>
+        <div class="sc-body">
+          <h3>타액 바이오마커 분석기 (컨셉)</h3>
+          <p>5종 바이오마커 동시 분석을 위한 데스크탑 기기 컨셉 디자인. 자가 채취 키트로 채취된 검체를 검진센터·의료기관에서 직접 분석 가능한 형태로 설계됩니다.</p>
+          <div class="sc-meta">
+            <span><span class="sc-meta-dot"></span>Concept · 디자인 샘플</span>
+            <span>QLB-Analyzer</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 
 <!-- ═══════════ CTA ═══════════ -->
