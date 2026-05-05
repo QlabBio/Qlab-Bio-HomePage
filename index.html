@@ -787,9 +787,9 @@ section { padding:120px 0; position:relative; }
   overflow:hidden;
 }
 .pipeline-detail-l {
-  padding:24px;
+  padding:14px 16px;
   border-right:1px solid var(--dark-line);
-  display:flex; flex-direction:column; gap:14px;
+  display:flex; flex-direction:column; gap:10px;
 }
 .pdetail-h {
   display:flex; justify-content:space-between; align-items:center;
@@ -821,8 +821,8 @@ section { padding:120px 0; position:relative; }
 }
 .stage-media-bar .meta { color:#fff; text-transform:none; letter-spacing:0; }
 .stage-media-body {
-  display:grid; grid-template-columns: 1.1fr 1fr;
-  gap:28px; padding:24px 28px;
+  display:grid; grid-template-columns: 1.6fr 1fr;
+  gap:18px; padding:12px 14px;
   flex:1; min-height:0;
   align-items:center;
 }
@@ -833,13 +833,13 @@ section { padding:120px 0; position:relative; }
   padding:0 !important;
   position:relative;
   overflow:visible;
-  min-height:280px;
+  min-height:440px;
   display:flex !important;
   align-items:center; justify-content:center;
 }
 .stage-media-thumb.contain { background-size:contain; background-color:transparent !important; background-position:center; background-repeat:no-repeat; }
-.stage-media-thumb svg { width:100%; height:auto; max-width:520px; }
-.stage-media-thumb img { max-width:100%; max-height:380px; height:auto; }
+.stage-media-thumb svg { width:100%; height:auto; max-width:none; }
+.stage-media-thumb img { max-width:100%; max-height:520px; height:auto; }
 .stage-media-thumb-tag {
   position:absolute; left:0; bottom:-32px;
   font-family:'Geist Mono', monospace; font-size:10px;
@@ -973,8 +973,8 @@ section { padding:120px 0; position:relative; }
 .code-block .ok { color:#22D17C; }
 
 .pdetail-r {
-  padding:24px;
-  display:flex; flex-direction:column; gap:14px;
+  padding:14px 16px;
+  display:flex; flex-direction:column; gap:10px;
 }
 .bar-row {
   display:grid; grid-template-columns:60px 1fr 36px;
@@ -1773,11 +1773,11 @@ footer {
               </div>
             </div>
 
-            <div class="dash-chart" style="display:grid; grid-template-columns:200px 1fr; gap:24px; padding:18px 20px;">
-              <div style="position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; background:radial-gradient(ellipse at 50% 30%, rgba(31,138,130,.12), transparent 65%);">
-                <img src="img/tube.png" alt="QLAB saliva collection kit" style="max-height:230px; width:auto; filter:drop-shadow(0 12px 28px rgba(0,0,0,.6));"/>
-                <div style="margin-top:14px; display:flex; flex-direction:column; align-items:center; gap:4px; font-family:'Geist Mono',monospace; font-size:10px; color:var(--dark-text);">
-                  <span style="color:#22D17C; font-weight:500;">● VALID · 3.5 mL</span>
+            <div class="dash-chart" style="display:grid; grid-template-columns:260px 1fr; gap:28px; padding:22px 24px;">
+              <div style="position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; background:radial-gradient(ellipse at 50% 30%, rgba(31,138,130,.14), transparent 65%);">
+                <img src="img/tube.png" alt="QLAB saliva collection kit" style="max-height:310px; width:auto; filter:drop-shadow(0 16px 36px rgba(0,0,0,.65));"/>
+                <div style="margin-top:18px; display:flex; flex-direction:column; align-items:center; gap:5px; font-family:'Geist Mono',monospace; font-size:11px; color:var(--dark-text);">
+                  <span style="color:#22D17C; font-weight:500; font-size:12px;">● VALID · 3.5 mL</span>
                   <span>QLB-04821</span>
                 </div>
               </div>
