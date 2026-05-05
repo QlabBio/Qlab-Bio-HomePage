@@ -1467,7 +1467,13 @@ section { padding:120px 0; position:relative; }
 
 @media (max-width:900px) {
   .showcase { padding:60px 0 80px; }
-  .showcase-grid { grid-template-columns:1fr; }
+  .showcase-grid,
+  .showcase-grid-split { grid-template-columns:1fr; gap:24px; }
+  .hero-banner { aspect-ratio: 16 / 7; min-height:240px; }
+}
+@media (max-width:600px) {
+  .hero-banner { aspect-ratio: 4 / 3; min-height:280px; }
+  .hero-banner img { object-position:center 40%; }
 }
 
 /* ─────────── HOME PARTNERS ROW ─────────── */
