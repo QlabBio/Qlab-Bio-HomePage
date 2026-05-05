@@ -734,9 +734,9 @@ section { padding:120px 0; position:relative; }
   overflow:hidden;
 }
 .pipeline-detail-l {
-  padding:24px;
+  padding:14px 16px;
   border-right:1px solid var(--dark-line);
-  display:flex; flex-direction:column; gap:14px;
+  display:flex; flex-direction:column; gap:10px;
 }
 .pdetail-h {
   display:flex; justify-content:space-between; align-items:center;
@@ -768,18 +768,25 @@ section { padding:120px 0; position:relative; }
 }
 .stage-media-bar .meta { color:#fff; text-transform:none; letter-spacing:0; }
 .stage-media-body {
-  display:grid; grid-template-columns: 180px 1fr;
-  gap:14px; padding:14px;
+  display:grid; grid-template-columns: 1.6fr 1fr;
+  gap:18px; padding:12px 14px;
   flex:1; min-height:0;
+  align-items:center;
 }
 .stage-media-thumb {
-  background:#000 center/cover no-repeat;
-  border:1px solid var(--dark-line);
-  border-radius:6px;
-  position:relative; overflow:hidden;
-  min-height:200px;
+  background:transparent !important;
+  border:none !important;
+  border-radius:0 !important;
+  padding:0 !important;
+  position:relative;
+  overflow:visible;
+  min-height:440px;
+  display:flex !important;
+  align-items:center; justify-content:center;
 }
-.stage-media-thumb.contain { background-size:contain; background-color:#0E0F12; background-position:center; background-repeat:no-repeat; }
+.stage-media-thumb.contain { background-size:contain; background-color:transparent !important; background-position:center; background-repeat:no-repeat; }
+.stage-media-thumb svg { width:100%; height:auto; max-width:none; }
+.stage-media-thumb img { max-width:100%; max-height:520px; height:auto; }
 .stage-media-thumb-tag {
   position:absolute; left:8px; bottom:8px;
   font-family:'Geist Mono', monospace; font-size:9px;
@@ -1305,8 +1312,8 @@ section { padding:120px 0; position:relative; }
 .code-block .ok { color:#22D17C; }
 
 .pdetail-r {
-  padding:24px;
-  display:flex; flex-direction:column; gap:14px;
+  padding:14px 16px;
+  display:flex; flex-direction:column; gap:10px;
 }
 .bar-row {
   display:grid; grid-template-columns:60px 1fr 36px;
@@ -2430,12 +2437,7 @@ const pipelineData = [
                 <stop offset="100%" stop-color="#FFB020" stop-opacity=".4"/>
               </radialGradient>
             </defs>
-            <!-- plate frame -->
-            <rect x="14" y="14" width="352" height="242" rx="8" fill="#0E0F12" stroke="#3F3F46" stroke-width="1"/>
-            <rect x="14" y="14" width="352" height="24" fill="#18181B" stroke="#3F3F46" stroke-width="1"/>
-            <text x="22" y="30" fill="#A1A1AA" font-family="Geist Mono" font-size="10">96-well · ELISA · QLB-v3.2 protocol</text>
-            <circle cx="350" cy="26" r="3" fill="#22D17C"><animate attributeName="opacity" values="1;.3;1" dur="1.4s" repeatCount="indefinite"/></circle>
-            <text x="343" y="29" fill="#22D17C" font-family="Geist Mono" font-size="8" text-anchor="end">live</text>
+            <!-- plate frame removed for cleaner display -->
             <!-- column labels -->
             <g font-family="Geist Mono" font-size="8" fill="#52525B" text-anchor="middle">
               <text x="56" y="56">1</text><text x="82" y="56">2</text><text x="108" y="56">3</text><text x="134" y="56">4</text>
@@ -2675,10 +2677,7 @@ const pipelineData = [
                 <stop offset="100%" stop-color="#FFB020" stop-opacity=".2"/>
               </radialGradient>
             </defs>
-            <!-- frame header -->
-            <rect x="14" y="14" width="292" height="20" fill="#18181B" stroke="#3F3F46" stroke-width="1"/>
-            <rect x="14" y="14" width="292" height="192" rx="6" fill="none" stroke="#3F3F46" stroke-width="1"/>
-            <text x="22" y="28" fill="#71717A" font-family="Geist Mono" font-size="9">qlb-v3.2 · neural inference</text>
+            <!-- frame removed for cleaner display -->
 
             <!-- column labels -->
             <g font-family="Geist Mono" font-size="7" fill="#52525B" text-anchor="middle">
