@@ -235,6 +235,27 @@ body.menu-open { overflow:hidden; }
   object-fit:cover; object-position:center 50%;
   display:block;
 }
+.hero-banner-caption {
+  position:absolute;
+  right:20px; bottom:14px;
+  display:inline-flex; align-items:center; gap:7px;
+  font-family:'Geist Mono', monospace;
+  font-size:10px; font-weight:600;
+  letter-spacing:.08em; text-transform:uppercase;
+  color:rgba(255,255,255,.86);
+  background:rgba(8,9,10,.55);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  padding:5px 10px;
+  border-radius:100px;
+  border:1px solid rgba(255,255,255,.14);
+  z-index:2;
+}
+.hero-banner-caption::before {
+  content:''; width:5px; height:5px; border-radius:50%;
+  background:#22D17C;
+  box-shadow:0 0 6px rgba(34,209,124,.7);
+}
 
 /* ─────────── HERO ─────────── */
 .hero {
@@ -1633,6 +1654,7 @@ footer {
 <!-- ═══════════ HERO BANNER (Lab) ═══════════ -->
 <div class="hero-banner">
   <img src="img/lab-real.jpg" alt="QLAB BIO 연구 인프라"/>
+  <span class="hero-banner-caption">QLAB BIO · Research Lab</span>
 </div>
 
 <!-- ═══════════ HERO ═══════════ -->
