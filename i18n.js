@@ -19,6 +19,11 @@
       if (html != null) el.innerHTML = html;
       else if (txt != null) el.textContent = txt;
     });
+    // Placeholder swap for inputs / textareas
+    document.querySelectorAll('[data-kr-placeholder], [data-en-placeholder]').forEach((el) => {
+      const ph = el.getAttribute('data-' + lang + '-placeholder');
+      if (ph != null) el.setAttribute('placeholder', ph);
+    });
     document.querySelectorAll('[data-lang-current]').forEach((s) => {
       s.textContent = lang === 'en' ? 'EN' : 'KR';
     });
