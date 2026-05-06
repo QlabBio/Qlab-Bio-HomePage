@@ -131,15 +131,6 @@
 
 <div class="bg-gray">
   <div class="section">
-    <!-- DESIGN SAMPLE NOTICE -->
-    <div class="fi" style="background:#FEF9C3; border:1.5px solid #FDE047; border-radius:12px; padding:14px 20px; margin-bottom:32px; display:flex; align-items:center; gap:12px;">
-      <span style="font-size:18px;">⚠️</span>
-      <div>
-        <strong style="font-size:13px; color:#92400E;">디자인 샘플 안내</strong>
-        <p style="font-size:12px; color:#78350F; margin-top:2px; line-height:1.5;">아래 뉴스 카드는 레이아웃 확인용 디자인 샘플입니다. 실제 보도자료·발표 내용이 아닙니다.</p>
-      </div>
-    </div>
-
     <div class="filter-row fi">
       <button class="fchip active">전체</button>
       <button class="fchip">보도자료</button>
@@ -148,47 +139,12 @@
       <button class="fchip">파트너십</button>
     </div>
 
-    <!-- Featured (DESIGN SAMPLE) -->
-    <a href="#" class="featured fi d1" style="text-decoration:none;color:inherit; position:relative;">
-      <div style="position:absolute; top:12px; right:12px; z-index:10; background:#FEF9C3; border:1px solid #FDE047; border-radius:6px; padding:3px 8px; font-size:10px; font-weight:700; color:#92400E; letter-spacing:.04em;">SAMPLE</div>
-      <div class="featured-thumb">
-        <span class="featured-tag-pos">보도자료</span>
-        <img src="img/meeting.png" alt=""/>
-      </div>
-      <div class="featured-body">
-        <div class="featured-date">날짜 미정</div>
-        <h3 class="featured-title">주요 보도자료 제목이 여기에 표시됩니다</h3>
-        <p class="featured-desc">보도자료 내용 요약이 여기에 표시됩니다. 실제 보도자료가 등록되면 이 자리를 채우게 됩니다.</p>
-        <span style="color:var(--brand);font-weight:700;font-size:14px;display:flex;align-items:center;gap:6px">자세히 보기 →</span>
-      </div>
-    </a>
-
-    <!-- News list (DESIGN SAMPLE) -->
-    <div class="news-list">
-      <a href="#" class="news-card fi d1">
-        <div class="news-thumb nt-a"></div>
-        <div class="nc-body">
-          <span class="nc-tag">보도자료</span>
-          <div class="nc-title">보도자료 제목이 여기에 표시됩니다</div>
-          <div class="nc-date">날짜 미정</div>
-        </div>
-      </a>
-      <a href="#" class="news-card fi d2">
-        <div class="news-thumb nt-b"></div>
-        <div class="nc-body">
-          <span class="nc-tag">공지사항</span>
-          <div class="nc-title">공지사항 제목이 여기에 표시됩니다</div>
-          <div class="nc-date">날짜 미정</div>
-        </div>
-      </a>
-      <a href="#" class="news-card fi d3">
-        <div class="news-thumb nt-c"></div>
-        <div class="nc-body">
-          <span class="nc-tag">연구성과</span>
-          <div class="nc-title">연구성과 제목이 여기에 표시됩니다</div>
-          <div class="nc-date">날짜 미정</div>
-        </div>
-      </a>
+    <!-- Empty state — 등록된 뉴스 없음 -->
+    <div class="fi" style="text-align:center; padding:80px 20px; color:var(--slate-400); background:white; border:1px solid var(--slate-100); border-radius:18px; box-shadow: var(--shadow-xs);">
+      <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" style="margin:0 auto 22px; opacity:.4;"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      <p style="font-size:17px; font-weight:600; color:var(--slate-700); margin-bottom:10px;">아직 등록된 소식이 없습니다</p>
+      <p style="font-size:14px; line-height:1.7; max-width:420px; margin:0 auto;">큐랩바이오의 최신 보도자료와 연구 성과를 곧 이곳에서 만나보실 수 있습니다.<br/>문의사항은 아래 이메일로 연락해 주세요.</p>
+      <a href="mailto:qlabbio@qlabbio.co.kr" style="display:inline-flex; align-items:center; gap:8px; margin-top:28px; padding:10px 20px; color:white; background:var(--brand); border-radius:100px; font-weight:600; font-size:14px; text-decoration:none;">qlabbio@qlabbio.co.kr →</a>
     </div>
   </div>
 </div>
