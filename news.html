@@ -104,47 +104,91 @@
     <span style="font-family:'Pretendard',sans-serif;font-size:17px;font-weight:700;color:var(--slate-900);letter-spacing:-.02em;">QLAB BIO</span>
   </a>
   <ul class="qnav-links">
-    <li><a href="index.html">홈</a></li>
-    <li><a href="about.html">회사소개</a></li>
-    <li><a href="business.html">사업분야</a></li>
-    <li><a href="news.html" class="active">뉴스룸</a></li>
-    <li><a href="contact.html">고객문의</a></li>
+    <li><a href="index.html" data-i18n data-kr="홈" data-en="Home">홈</a></li>
+    <li><a href="about.html" data-i18n data-kr="회사소개" data-en="About">회사소개</a></li>
+    <li><a href="business.html" data-i18n data-kr="사업분야" data-en="Platform">사업분야</a></li>
+    <li><a href="news.html" class="active" data-i18n data-kr="뉴스룸" data-en="Newsroom">뉴스룸</a></li>
+    <li><a href="contact.html" data-i18n data-kr="고객문의" data-en="Contact">고객문의</a></li>
   </ul>
   <div class="qnav-right">
-    <button class="lang-btn">KR / EN</button>
-    <a href="contact.html" class="btn btn-primary btn-sm">문의하기</a>
+    <button class="lang-btn" aria-label="Toggle language">KR / EN</button>
+    <a href="contact.html" class="btn btn-primary btn-sm" data-i18n data-kr="문의하기" data-en="Contact us">문의하기</a>
   </div>
 </nav>
 
 <div class="page-hero">
   <div class="page-hero-inner">
     <div class="page-hero-eyebrow">Newsroom</div>
-    <h1 class="page-hero-title">큐랩바이오 소식</h1>
-    <p class="page-hero-sub">큐랩바이오의 최신 보도자료·공지사항·연구 성과를 만나보세요.</p>
+    <h1 class="page-hero-title" data-i18n data-kr="큐랩바이오 소식" data-en="QLAB BIO News">큐랩바이오 소식</h1>
+    <p class="page-hero-sub" data-i18n data-kr="큐랩바이오의 최신 보도자료·공지사항·연구 성과를 만나보세요." data-en="Latest press releases, announcements, and research updates from QLAB BIO.">큐랩바이오의 최신 보도자료·공지사항·연구 성과를 만나보세요.</p>
   </div>
 </div>
 <div class="breadcrumb">
   <div class="container" style="padding:0">
-    <a href="index.html">홈</a> &nbsp;›&nbsp; <span>뉴스룸</span>
+    <a href="index.html" data-i18n data-kr="홈" data-en="Home">홈</a> &nbsp;›&nbsp; <span data-i18n data-kr="뉴스룸" data-en="Newsroom">뉴스룸</span>
   </div>
 </div>
 
 <div class="bg-gray">
   <div class="section">
-    <div class="filter-row fi">
-      <button class="fchip active">전체</button>
-      <button class="fchip">보도자료</button>
-      <button class="fchip">공지사항</button>
-      <button class="fchip">연구성과</button>
-      <button class="fchip">파트너십</button>
+    <!-- DESIGN SAMPLE NOTICE -->
+    <div class="fi" style="background:#FEF9C3; border:1.5px solid #FDE047; border-radius:12px; padding:14px 20px; margin-bottom:32px; display:flex; align-items:center; gap:12px;">
+      <span style="font-size:18px;">⚠️</span>
+      <div>
+        <strong style="font-size:13px; color:#92400E;">디자인 샘플 안내</strong>
+        <p style="font-size:12px; color:#78350F; margin-top:2px; line-height:1.5;">아래 뉴스 카드는 레이아웃 확인용 디자인 샘플입니다. 실제 보도자료·발표 내용이 아닙니다.</p>
+      </div>
     </div>
 
-    <!-- Empty state — 등록된 뉴스 없음 -->
-    <div class="fi" style="text-align:center; padding:80px 20px; color:var(--slate-400); background:white; border:1px solid var(--slate-100); border-radius:18px; box-shadow: var(--shadow-xs);">
-      <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" style="margin:0 auto 22px; opacity:.4;"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-      <p style="font-size:17px; font-weight:600; color:var(--slate-700); margin-bottom:10px;">아직 등록된 소식이 없습니다</p>
-      <p style="font-size:14px; line-height:1.7; max-width:420px; margin:0 auto;">큐랩바이오의 최신 보도자료와 연구 성과를 곧 이곳에서 만나보실 수 있습니다.<br/>문의사항은 아래 이메일로 연락해 주세요.</p>
-      <a href="mailto:qlabbio@qlabbio.co.kr" style="display:inline-flex; align-items:center; gap:8px; margin-top:28px; padding:10px 20px; color:white; background:var(--brand); border-radius:100px; font-weight:600; font-size:14px; text-decoration:none;">qlabbio@qlabbio.co.kr →</a>
+    <div class="filter-row fi">
+      <button class="fchip active" data-i18n data-kr="전체" data-en="All">전체</button>
+      <button class="fchip" data-i18n data-kr="보도자료" data-en="Press">보도자료</button>
+      <button class="fchip" data-i18n data-kr="공지사항" data-en="Notices">공지사항</button>
+      <button class="fchip" data-i18n data-kr="연구성과" data-en="Research">연구성과</button>
+      <button class="fchip" data-i18n data-kr="파트너십" data-en="Partnership">파트너십</button>
+    </div>
+
+    <!-- Featured (DESIGN SAMPLE) -->
+    <a href="#" class="featured fi d1" style="text-decoration:none;color:inherit; position:relative;">
+      <div style="position:absolute; top:12px; right:12px; z-index:10; background:#FEF9C3; border:1px solid #FDE047; border-radius:6px; padding:3px 8px; font-size:10px; font-weight:700; color:#92400E; letter-spacing:.04em;">SAMPLE</div>
+      <div class="featured-thumb">
+        <span class="featured-tag-pos">보도자료</span>
+        <img src="img/meeting.png" alt=""/>
+      </div>
+      <div class="featured-body">
+        <div class="featured-date">날짜 미정</div>
+        <h3 class="featured-title">주요 보도자료 제목이 여기에 표시됩니다</h3>
+        <p class="featured-desc">보도자료 내용 요약이 여기에 표시됩니다. 실제 보도자료가 등록되면 이 자리를 채우게 됩니다.</p>
+        <span style="color:var(--brand);font-weight:700;font-size:14px;display:flex;align-items:center;gap:6px">자세히 보기 →</span>
+      </div>
+    </a>
+
+    <!-- News list (DESIGN SAMPLE) -->
+    <div class="news-list">
+      <a href="#" class="news-card fi d1">
+        <div class="news-thumb nt-a"></div>
+        <div class="nc-body">
+          <span class="nc-tag">보도자료</span>
+          <div class="nc-title">보도자료 제목이 여기에 표시됩니다</div>
+          <div class="nc-date">날짜 미정</div>
+        </div>
+      </a>
+      <a href="#" class="news-card fi d2">
+        <div class="news-thumb nt-b"></div>
+        <div class="nc-body">
+          <span class="nc-tag">공지사항</span>
+          <div class="nc-title">공지사항 제목이 여기에 표시됩니다</div>
+          <div class="nc-date">날짜 미정</div>
+        </div>
+      </a>
+      <a href="#" class="news-card fi d3">
+        <div class="news-thumb nt-c"></div>
+        <div class="nc-body">
+          <span class="nc-tag">연구성과</span>
+          <div class="nc-title">연구성과 제목이 여기에 표시됩니다</div>
+          <div class="nc-date">날짜 미정</div>
+        </div>
+      </a>
     </div>
   </div>
 </div>
@@ -155,37 +199,37 @@
       <a href="index.html" class="qfoot-logo">
         <img src="img/logo-mark-white.png" alt="QLAB BIO" style="height:36px;width:auto;display:block;">
       </a>
-      <p class="qfoot-desc">생체지표(바이오마커) 분석 기반 인지장애 조기진단 전문 기업</p>
+      <p class="qfoot-desc" data-i18n data-kr="생체지표(바이오마커) 분석 기반 인지장애 조기진단 전문 기업" data-en="Biomarker-based early cognitive screening company">생체지표(바이오마커) 분석 기반 인지장애 조기진단 전문 기업</p>
       <div class="qfoot-contact">
         <a href="mailto:qlabbio@qlabbio.co.kr">qlabbio@qlabbio.co.kr</a>
-        <span style="color:var(--muted, var(--slate-400));">추후 공개 예정</span>
+        <span style="color:var(--muted, var(--slate-400));" data-i18n data-kr="전화 추후 공개" data-en="Phone TBA">전화 추후 공개</span>
       </div>
     </div>
     <div>
       <div class="qfoot-col-title">Company</div>
       <ul class="qfoot-links">
-        <li><a href="about.html">회사소개</a></li>
-        <li><a href="about.html">인사말</a></li>
-        <li><a href="about.html">연혁</a></li>
-        <li><a href="about.html">파트너십</a></li>
+        <li><a href="about.html" data-i18n data-kr="회사소개" data-en="About">회사소개</a></li>
+        <li><a href="about.html" data-i18n data-kr="인사말" data-en="Greeting">인사말</a></li>
+        <li><a href="about.html" data-i18n data-kr="연혁" data-en="History">연혁</a></li>
+        <li><a href="about.html" data-i18n data-kr="파트너십" data-en="Partnership">파트너십</a></li>
       </ul>
     </div>
     <div>
       <div class="qfoot-col-title">Business</div>
       <ul class="qfoot-links">
-        <li><a href="business.html">솔루션 개요</a></li>
-        <li><a href="business.html">핵심기술</a></li>
-        <li><a href="business.html">AI 전략</a></li>
+        <li><a href="business.html" data-i18n data-kr="솔루션 개요" data-en="Solution">솔루션 개요</a></li>
+        <li><a href="business.html" data-i18n data-kr="핵심기술" data-en="Core Tech">핵심기술</a></li>
+        <li><a href="business.html" data-i18n data-kr="AI 전략" data-en="AI Strategy">AI 전략</a></li>
         <li><a href="business.html">R&amp;D</a></li>
       </ul>
     </div>
     <div>
       <div class="qfoot-col-title">Support</div>
       <ul class="qfoot-links">
-        <li><a href="news.html">뉴스룸</a></li>
-        <li><a href="news.html">보도자료</a></li>
-        <li><a href="contact.html">고객문의</a></li>
-        <li><a href="contact.html">오시는 길</a></li>
+        <li><a href="news.html" data-i18n data-kr="뉴스룸" data-en="Newsroom">뉴스룸</a></li>
+        <li><a href="news.html" data-i18n data-kr="보도자료" data-en="Press">보도자료</a></li>
+        <li><a href="contact.html" data-i18n data-kr="고객문의" data-en="Contact">고객문의</a></li>
+        <li><a href="contact.html" data-i18n data-kr="오시는 길" data-en="Location">오시는 길</a></li>
       </ul>
     </div>
   </div>
@@ -213,5 +257,6 @@ document.querySelectorAll('.fchip').forEach(c => c.addEventListener('click', () 
   c.classList.add('active');
 }));
 </script>
+<script src="i18n.js" defer></script>
 </body>
 </html>
