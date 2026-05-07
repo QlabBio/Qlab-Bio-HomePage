@@ -1,0 +1,21 @@
+# robots.txt for QLAB BIO
+# https://qlabbio.com
+
+User-agent: *
+Allow: /
+
+# Search engines — full crawl welcome
+User-agent: Googlebot
+Allow: /
+
+User-agent: Yeti
+Allow: /
+
+User-agent: bingbot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+# Sitemap location
+Sitemap: https://qlabbio.com/sitemap.xml
