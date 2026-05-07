@@ -657,6 +657,19 @@ section { padding:120px 0; position:relative; }
 
 /* ─────────── HOW IT WORKS (pipeline) ─────────── */
 .how { background:var(--bg); }
+
+/* ─────────── PLATFORM DIAGRAM (replaces pipeline mock) ─────────── */
+.platform-diagram {
+  margin: 56px auto 0;
+  max-width: 1200px;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 24px 64px -20px rgba(15, 23, 42, .18), 0 0 0 1px var(--line);
+  background: #fff;
+}
+.platform-diagram img { width: 100%; height: auto; display: block; }
+@media (max-width: 900px) { .platform-diagram { margin-top: 32px; border-radius: 12px; } }
+
 .pipeline {
   background:var(--dark);
   border-radius:14px;
@@ -2104,72 +2117,22 @@ footer {
 </section>
 
 <!-- ═══════════ HOW IT WORKS ═══════════ -->
+<!-- ═══════════ HOW IT WORKS — Platform Diagram ═══════════ -->
 <section class="how">
   <div class="wrap">
     <div class="sec-head">
       <div class="sec-num"><span>SECTION</span><strong>02 / How it works</strong></div>
       <div>
-        <h2 class="sec-title" data-i18n data-kr-html="타액 한 방울에서 <span class='blue'>위험도 보고서</span>까지<br/><span class='light'>— 평균 2일, 네 단계로 완결되는 진단 플로우.</span>" data-en-html="From a single drop of saliva to a <span class='blue'>risk report</span><br/><span class='light'>— a four-stage flow, completed on average in 2 days.</span>">타액 한 방울에서 <span class="blue">위험도 보고서</span>까지<br/><span class="light">— 평균 2일, 네 단계로 완결되는 진단 플로우.</span></h2>
-        <p class="sec-lead" data-i18n data-kr="의료인의 도움 없이 자가 채취한 검체를 받아 핵심 바이오마커를 동시에 정량 분석하고, AI 판별 모델이 위험도를 세 단계로 분류해 보고합니다." data-en="We receive self-collected samples (no medical professional needed), quantitatively assay the full biomarker panel, and have an AI classifier triage the result into three risk levels.">의료인의 도움 없이 자가 채취한 검체를 받아 핵심 바이오마커를 동시에 정량 분석하고, AI 판별 모델이 위험도를 세 단계로 분류해 보고합니다.</p>
+        <h2 class="sec-title" data-i18n data-kr-html="다중 바이오마커 기반<br/><span class=&#39;blue&#39;>인지장애 진행단계</span> 예측 AI 플랫폼" data-en-html="Multi-biomarker AI platform<br/>predicting <span class=&#39;blue&#39;>cognitive decline progression</span>">다중 바이오마커 기반<br/><span class="blue">인지장애 진행단계</span> 예측 AI 플랫폼</h2>
+        <p class="sec-lead" data-i18n data-kr="타액 기반 다중 바이오마커 분석과 AI 머신러닝을 통해 인지장애 진행단계를 예측하는 비침습·고정확 디지털 바이오헬스 플랫폼." data-en="A non-invasive, high-accuracy digital biohealth platform that predicts cognitive-decline progression through saliva-based multi-biomarker analysis combined with AI machine learning.">타액 기반 다중 바이오마커 분석과 AI 머신러닝을 통해 인지장애 진행단계를 예측하는 비침습·고정확 디지털 바이오헬스 플랫폼.</p>
       </div>
     </div>
 
-    <div class="pipeline">
-      <div class="pipeline-bar">
-        <span class="live">Pipeline online</span>
-        <span class="sep">·</span>
-        <span>4 stages</span>
-        <span class="sep">·</span>
-        <span>avg. 1d 18h</span>
-        <span style="margin-left:auto; color:#fff">QLB-v3.2</span>
-      </div>
-
-      <div class="pipeline-flow" id="pflow">
-        <div class="pipeline-step active" data-i="0">
-          <div class="pipeline-step-i"><span>STAGE 01</span><span class="dur">~5min</span></div>
-          <h4>타액 채취</h4>
-          <p>의료인 없이 자가 채취. 상온 1주 보관, 우편 회송으로 검사실에 도착.</p>
-        </div>
-        <div class="pipeline-step" data-i="1">
-          <div class="pipeline-step-i"><span>STAGE 02</span><span class="dur">~24h</span></div>
-          <h4>바이오마커 분석</h4>
-          <p>핵심 바이오마커를 동시에 정량 분석.</p>
-        </div>
-        <div class="pipeline-step" data-i="2">
-          <div class="pipeline-step-i"><span>STAGE 03</span><span class="dur">~2min</span></div>
-          <h4>AI 위험도 산출</h4>
-          <p>딥러닝 모델이 5종 마커를 통합 분석해 위험도를 산출. 정확도 90% 이상.</p>
-        </div>
-        <div class="pipeline-step" data-i="3">
-          <div class="pipeline-step-i"><span>STAGE 04</span><span class="dur">~2h</span></div>
-          <h4>리포트 발급</h4>
-          <p>3단계 위험도와 마커별 상세 수치를 EMR·이메일·환자 포털로 발송.</p>
-        </div>
-      </div>
-
-      <div class="pipeline-detail">
-        <!-- LEFT: code-style log -->
-        <div class="pipeline-detail-l">
-          <div class="pdetail-h">
-            <span id="pdLabel">request · POST /v1/samples</span>
-            <span class="ok">200 OK · 142ms</span>
-          </div>
-          <div id="pdCode"></div>
-        </div>
-
-        <!-- RIGHT: live visualization -->
-        <div class="pdetail-r">
-          <div class="pdetail-h">
-            <span>Live preview</span>
-            <span style="color:#fff" id="pdRight">Sample QLB-04821</span>
-          </div>
-          <div id="pdViz"></div>
-        </div>
-      </div>
-    </div>
+    <figure class="platform-diagram reveal" style="margin-top:48px;">
+      <img src="/img/platform-diagram.jpg" alt="다중 바이오마커 기반 인지장애 진행단계 예측 AI 플랫폼 — 5단계 워크플로우, AI 예측 모델, 활용 계획" loading="lazy"/>
+    </figure>
   </div>
 </section>
-
 <!-- ═══════════ COMPARE ═══════════ -->
 <section class="compare">
   <div class="wrap">

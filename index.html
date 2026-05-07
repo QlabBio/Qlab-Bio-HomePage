@@ -1414,6 +1414,20 @@ section { padding:120px 0; position:relative; }
 }
 .cta .btn-outline:hover { background:rgba(255,255,255,.08); border-color:#fff; }
 
+/* ─────────── PLATFORM DIAGRAM (replaces dashboard mock on home) ─────────── */
+.platform-diagram {
+  margin: 56px auto 0;
+  max-width: 1200px;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 24px 64px -20px rgba(15, 23, 42, .18), 0 0 0 1px var(--line);
+  background: #fff;
+}
+.platform-diagram img {
+  width: 100%; height: auto; display: block;
+}
+@media (max-width: 900px) { .platform-diagram { margin-top: 32px; border-radius: 12px; } }
+
 /* ─────────── VALUE STRIP (3 cards on home) ─────────── */
 .vstrip { padding:120px 0 40px; background:var(--bg); }
 .vstrip-grid {
@@ -1766,187 +1780,10 @@ footer {
       <div><span class="dot"></span><span data-i18n data-kr="B2B 진단 플랫폼" data-en="B2B diagnostic platform">B2B 진단 플랫폼</span></div>
     </div>
 
-    <!-- Dashboard mock -->
-    <div class="dash reveal">
-      <div class="dash-frame">
-        <div class="dash-bar">
-          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
-          <span class="url"><span class="url-host">app.qlabbio.com</span>/lab/dashboard</span>
-          <div class="dash-bar-actions">
-            <span>⌘K</span><span>Share</span>
-          </div>
-        </div>
-        <div class="dash-body">
-
-          <!-- Sidebar -->
-          <aside class="dash-side">
-            <div class="dash-side-section">
-              <div class="dash-side-h">Workspace</div>
-              <div class="dash-side-item active">
-                <svg class="dash-side-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-                Overview <span class="dash-side-count">·</span>
-              </div>
-              <div class="dash-side-item">
-                <svg class="dash-side-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg>
-                Samples <span class="dash-side-count">428</span>
-              </div>
-              <div class="dash-side-item">
-                <svg class="dash-side-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-                Reports <span class="dash-side-count">12</span>
-              </div>
-            </div>
-            <div class="dash-side-section">
-              <div class="dash-side-h">Insights</div>
-              <div class="dash-side-item">
-                <svg class="dash-side-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 17l6-6 4 4 8-8"/></svg>
-                Trends
-              </div>
-              <div class="dash-side-item">
-                <svg class="dash-side-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>
-                Cohorts
-              </div>
-            </div>
-          </aside>
-
-          <!-- Main -->
-          <div class="dash-main">
-            <div class="dash-main-h">
-              <div>
-                <div class="dash-main-title">
-                  Cognitive Risk · Q2 Cohort
-                  <span class="dash-pill">QLB-v3.2</span>
-                </div>
-                <div class="dash-main-meta" style="margin-top:6px"><span class="live">Live</span> · 428 samples · updated 14s ago</div>
-              </div>
-            </div>
-
-            <div class="dash-metrics">
-              <div class="dash-metric">
-                <div class="dash-metric-lbl">Total runs</div>
-                <div class="dash-metric-val">428<span class="small"> /500</span></div>
-                <div class="dash-metric-trend">↑ 12.4% MoM</div>
-              </div>
-              <div class="dash-metric">
-                <div class="dash-metric-lbl">Avg confidence</div>
-                <div class="dash-metric-val">92.4<span class="small">%</span></div>
-                <div class="dash-metric-trend">↑ 0.8 pp</div>
-              </div>
-              <div class="dash-metric">
-                <div class="dash-metric-lbl">High-risk flagged</div>
-                <div class="dash-metric-val">37</div>
-                <div class="dash-metric-trend warn">↑ 4 vs last week</div>
-              </div>
-            </div>
-
-            <div class="dash-chart" style="display:grid; grid-template-columns:260px 1fr; gap:28px; padding:22px 24px;">
-              <div style="position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; background:radial-gradient(ellipse at 50% 30%, rgba(31,138,130,.14), transparent 65%);">
-                <img src="img/tube.png" alt="QLAB saliva collection kit" style="max-height:310px; width:auto; filter:drop-shadow(0 16px 36px rgba(0,0,0,.65));"/>
-                <div style="margin-top:18px; display:flex; flex-direction:column; align-items:center; gap:5px; font-family:'Geist Mono',monospace; font-size:11px; color:var(--dark-text);">
-                  <span style="color:#22D17C; font-weight:500; font-size:12px;">● VALID · 3.5 mL</span>
-                  <span>QLB-04821</span>
-                </div>
-              </div>
-              <div style="display:flex; flex-direction:column;">
-                <div class="dash-chart-h">
-                  <h4>5-marker assay · QLB-04821</h4>
-                  <div class="legend">
-                    <span><i style="background:#7E9DFF"></i>측정값</span>
-                    <span><i style="background:#52525B; opacity:.5"></i>정상범위</span>
-                  </div>
-                </div>
-                <svg viewBox="0 0 380 150" preserveAspectRatio="none" style="margin-top:6px; flex:1; min-height:140px;">
-                  <!-- baseline grid -->
-                  <line x1="0" y1="40" x2="380" y2="40" stroke="#232328" stroke-dasharray="2 4"/>
-                  <line x1="0" y1="80" x2="380" y2="80" stroke="#232328" stroke-dasharray="2 4"/>
-                  <line x1="0" y1="120" x2="380" y2="120" stroke="#1C1C20"/>
-                  <!-- normal range bands (slate) -->
-                  <rect x="20"  y="60" width="40" height="40" fill="#52525B" opacity=".18" rx="2"/>
-                  <rect x="92"  y="55" width="40" height="50" fill="#52525B" opacity=".18" rx="2"/>
-                  <rect x="164" y="50" width="40" height="55" fill="#52525B" opacity=".18" rx="2"/>
-                  <rect x="236" y="62" width="40" height="40" fill="#52525B" opacity=".18" rx="2"/>
-                  <rect x="308" y="68" width="40" height="38" fill="#52525B" opacity=".18" rx="2"/>
-                  <!-- measured bars -->
-                  <rect x="32"  y="48" width="16" height="72" fill="#7E9DFF" rx="1.5">
-                    <animate attributeName="height" from="0" to="72" dur=".7s" fill="freeze"/>
-                    <animate attributeName="y" from="120" to="48" dur=".7s" fill="freeze"/>
-                  </rect>
-                  <rect x="104" y="68" width="16" height="52" fill="#7E9DFF" rx="1.5">
-                    <animate attributeName="height" from="0" to="52" dur=".7s" begin=".1s" fill="freeze"/>
-                    <animate attributeName="y" from="120" to="68" dur=".7s" begin=".1s" fill="freeze"/>
-                  </rect>
-                  <rect x="176" y="36" width="16" height="84" fill="#FFB020" rx="1.5">
-                    <animate attributeName="height" from="0" to="84" dur=".7s" begin=".2s" fill="freeze"/>
-                    <animate attributeName="y" from="120" to="36" dur=".7s" begin=".2s" fill="freeze"/>
-                  </rect>
-                  <rect x="248" y="58" width="16" height="62" fill="#7E9DFF" rx="1.5">
-                    <animate attributeName="height" from="0" to="62" dur=".7s" begin=".3s" fill="freeze"/>
-                    <animate attributeName="y" from="120" to="58" dur=".7s" begin=".3s" fill="freeze"/>
-                  </rect>
-                  <rect x="320" y="74" width="16" height="46" fill="#7E9DFF" rx="1.5">
-                    <animate attributeName="height" from="0" to="46" dur=".7s" begin=".4s" fill="freeze"/>
-                    <animate attributeName="y" from="120" to="74" dur=".7s" begin=".4s" fill="freeze"/>
-                  </rect>
-                  <!-- highlight outlier -->
-                  <circle cx="184" cy="36" r="3" fill="#FFB020"/>
-                  <circle cx="184" cy="36" r="6" fill="#FFB020" opacity=".3">
-                    <animate attributeName="r" from="3" to="10" dur="1.5s" repeatCount="indefinite"/>
-                    <animate attributeName="opacity" from=".4" to="0" dur="1.5s" repeatCount="indefinite"/>
-                  </circle>
-                  <!-- labels -->
-                  <text x="40"  y="138" text-anchor="middle" fill="#71717A" font-family="Geist Mono" font-size="9">Marker A</text>
-                  <text x="112" y="138" text-anchor="middle" fill="#71717A" font-family="Geist Mono" font-size="9">Marker B</text>
-                  <text x="184" y="138" text-anchor="middle" fill="#FFB020" font-family="Geist Mono" font-size="9">Marker C↑</text>
-                  <text x="256" y="138" text-anchor="middle" fill="#71717A" font-family="Geist Mono" font-size="9">Marker D</text>
-                  <text x="328" y="138" text-anchor="middle" fill="#71717A" font-family="Geist Mono" font-size="9">Melaton.</text>
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <!-- Right panel -->
-          <aside class="dash-right">
-            <div class="dash-right-h">
-              <h4>Recent activity</h4>
-              <span>Live</span>
-            </div>
-            <div class="dash-event">
-              <span class="dash-event-dot g"></span>
-              <div>
-                <div class="dash-event-name">Report dispatched</div>
-                <div class="dash-event-meta">QLB-2026-04821 · 김OO</div>
-              </div>
-              <span class="dash-event-time">14s</span>
-            </div>
-            <div class="dash-event">
-              <span class="dash-event-dot"></span>
-              <div>
-                <div class="dash-event-name">AI inference complete</div>
-                <div class="dash-event-meta">Risk: Moderate · 68%</div>
-              </div>
-              <span class="dash-event-time">02m</span>
-            </div>
-            <div class="dash-event">
-              <span class="dash-event-dot a"></span>
-              <div>
-                <div class="dash-event-name">Sample flagged</div>
-                <div class="dash-event-meta">Marker B ratio · re-run</div>
-              </div>
-              <span class="dash-event-time">11m</span>
-            </div>
-            <div class="dash-event">
-              <span class="dash-event-dot g"></span>
-              <div>
-                <div class="dash-event-name">Batch ingested</div>
-                <div class="dash-event-meta">42 samples · 차움</div>
-              </div>
-              <span class="dash-event-time">38m</span>
-            </div>
-          </aside>
-
-        </div>
-      </div>
-    </div>
-
+    <!-- Platform diagram (multi-biomarker AI flow) -->
+    <figure class="platform-diagram reveal">
+      <img src="/img/platform-diagram.jpg" alt="다중 바이오마커 기반 인지장애 진행단계 예측 AI 플랫폼" loading="lazy"/>
+    </figure>
     <!-- Trust strip removed — replace with confirmed partner logos when ready -->
   </div>
 </header>
