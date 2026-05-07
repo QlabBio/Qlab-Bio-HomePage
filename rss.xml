@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>큐랩바이오 뉴스 · QLAB BIO Newsroom</title>
+    <link>https://qlabbio.com/news</link>
+    <description>주식회사 큐랩바이오의 최신 보도자료, 공지사항, 연구 성과를 알려드립니다. 타액 기반 알츠하이머 조기 진단 플랫폼.</description>
+    <language>ko-kr</language>
+    <copyright>© 2026 주식회사 큐랩바이오. All rights reserved.</copyright>
+    <managingEditor>qlabbio@qlabbio.co.kr (QLAB BIO)</managingEditor>
+    <webMaster>qlabbio@qlabbio.co.kr (QLAB BIO)</webMaster>
+    <atom:link href="https://qlabbio.com/rss.xml" rel="self" type="application/rss+xml"/>
+    <image>
+      <url>https://qlabbio.com/img/logo-mark.png</url>
+      <title>큐랩바이오</title>
+      <link>https://qlabbio.com</link>
+    </image>
+    <!-- 보도자료 추가 시 아래 형식으로 <item> 추가:
+    <item>
+      <title>제목</title>
+      <link>https://qlabbio.com/news/article-slug</link>
+      <description>요약 내용</description>
+      <pubDate>Sat, 01 Jan 2026 09:00:00 +0900</pubDate>
+      <guid>https://qlabbio.com/news/article-slug</guid>
+    </item>
+    -->
+  </channel>
+</rss>

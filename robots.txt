@@ -19,3 +19,6 @@ Allow: /
 
 # Sitemap location
 Sitemap: https://qlabbio.com/sitemap.xml
+
+# RSS feed (newsroom)
+# https://qlabbio.com/rss.xml
