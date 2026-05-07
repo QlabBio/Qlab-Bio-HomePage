@@ -409,11 +409,11 @@ body.menu-open { overflow:hidden; }
 .dash-body {
   display:grid;
   grid-template-columns:200px 1fr 280px;
-  height:520px;
+  min-height:520px;
   color:var(--dark-text);
 }
 @media (max-width:900px) {
-  .dash-body { grid-template-columns:1fr; height:auto; }
+  .dash-body { grid-template-columns:1fr; min-height:auto; }
   .dash-side, .dash-right { display:none; }
   .dash-bar .url { max-width:none; }
 }
@@ -507,7 +507,20 @@ body.menu-open { overflow:hidden; }
   border-radius:8px;
   padding:18px;
   position:relative;
-  height:200px;
+  min-height:200px;
+}
+/* On narrow screens: hide the tube preview panel and stack chart full-width */
+@media (max-width:780px) {
+  .dash-chart { grid-template-columns:1fr !important; gap:12px !important; padding:16px !important; }
+  .dash-chart > div:first-child { display:none !important; }
+  .dash-chart-h { flex-wrap:wrap; gap:6px; }
+  .dash-chart-h h4 { font-size:13px; }
+  .dash-chart svg { min-height:160px; }
+}
+@media (max-width:600px) {
+  .dash-main { padding:18px 16px !important; }
+  .dash-metric { padding:12px 12px; }
+  .dash-metric-val { font-size:20px; }
 }
 .dash-chart-h {
   display:flex; justify-content:space-between; align-items:center;
